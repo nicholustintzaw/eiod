@@ -69,17 +69,44 @@ jobs:
           fi
           echo "unchanged"
 
-      - name: cut-off CSV still has 616 rows and the expected header
+      # Compares the FIELD NAMES, after stripping quotes - not a raw substring
+      # of the header line. The first version matched '^metric,table,indicator,'
+      # and failed the moment the CSV was rewritten with quoted fields, which
+      # is a formatting difference every CSV reader is indifferent to. A
+      # structural check should not care how the file is quoted.
+      #
+      # Comparing the full list is also stricter than the original: it catches
+      # a column being added, removed, renamed or reordered, not just the
+      # first three being right.
+      - name: cut-off CSV still has 616 rows and the expected columns
         run: |
-          rows=$(( $(wc -l < functions/dta/eiod_cutoffs.csv) - 1 ))
+          csv=functions/dta/eiod_cutoffs.csv
+
+          rows=$(( $(wc -l < "$csv") - 1 ))
           echo "data rows: $rows"
-          test "$rows" -eq 616
-          head -1 functions/dta/eiod_cutoffs.csv | grep -q '^metric,table,indicator,'
-          # the rescaling column must not come back - see readme/01 section 2
-          if head -1 functions/dta/eiod_cutoffs.csv | grep -q 'scale_to_db_unit'; then
-            echo "scale_to_db_unit has reappeared in the CSV; nothing may be rescaled" >&2
+          if [ "$rows" -ne 616 ]; then
+            echo "expected 616 data rows, found $rows" >&2; exit 1
+          fi
+
+          expected='metric,table,indicator,indicator_label,unit,demogroup,demogroup_label,sex,age_min,age_max,row_order,percentile,value_published'
+          actual=$(head -1 "$csv" | tr -d '"\r')
+          echo "columns: $actual"
+          if [ "$actual" != "$expected" ]; then
+            echo "" >&2
+            echo "the cut-off CSV columns have changed." >&2
+            echo "  expected: $expected" >&2
+            echo "  actual:   $actual" >&2
             exit 1
           fi
+
+          # scale_to_db_unit must never come back: nothing is rescaled in the
+          # reference data. See functions/readme/01_eiod_build_cutoffs.md s2.
+          case "$actual" in
+            *scale_to_db_unit*)
+              echo "scale_to_db_unit has reappeared; nothing may be rescaled" >&2
+              exit 1 ;;
+          esac
+          echo "columns ok"
 
       # ---------------------------------------------------------------- #
       # 2. Every command file declares a version.
