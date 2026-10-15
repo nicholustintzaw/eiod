@@ -7,6 +7,7 @@
 *  INPUT     outputs/eiod_cutoffs.csv
 *              Transcribed programmatically from Tables 3 and 4a-4g of
 *              Intake-EIOD-Methods-Paper-Jan2026-Final.pdf (pages 16-19).
+*              https://www.intake.org/sites/default/files/2026-01/Intake-EIOD-Methods-Paper-Jan2026-Final.pdf
 *              One row per (metric x indicator x demographic group x row).
 *
 *  OUTPUT    outputs/eiod_cutoffs.dta    616 rows, long format
@@ -237,6 +238,7 @@ sort    metric indicator demogroup row_order
 compress
 note: Cut-offs for the Intake dietary environmental impact metrics.
 note: Source - Intake-EIOD-Methods-Paper-Jan2026-Final.pdf, Tables 3 and 4a-4g.
+note: https://www.intake.org/sites/default/files/2026-01/Intake-EIOD-Methods-Paper-Jan2026-Final.pdf
 note: Built by eiod_build_cutoffs.do on `c(current_date)'.
 note: `value' is the cut-off EXACTLY as printed in the paper - nothing is rescaled.
 note: Eutrophication is printed in kg in Table 3 and in g in Table 4f; see the

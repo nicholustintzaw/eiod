@@ -1,7 +1,7 @@
 # `eiod_fn_01_demogroup.do` — the 8 age × sex groups
 
 **Defines** `eiod_demogroup`
-**Source** Intake-EIOD-Methods-Paper-Jan2026-Final.pdf — the column headings of Tables 3, 4a–4g and 5a–5b
+**Source** [Intake-EIOD-Methods-Paper-Jan2026-Final.pdf](https://www.intake.org/sites/default/files/2026-01/Intake-EIOD-Methods-Paper-Jan2026-Final.pdf) — the column headings of Tables 3, 4a–4g and 5a–5b
 **Reads** nothing. No cut-off file needed.
 **Verified by** `eiod_validate.do` Part F (boundary ages)
 

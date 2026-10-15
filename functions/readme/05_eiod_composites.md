@@ -1,7 +1,7 @@
 # `eiod_fn_04_hesd.do` and `eiod_fn_05_hdlei.do` — Tables 5a and 5b
 
 **Defines** `eiod_hesd` (Table 5a), `eiod_hdlei` (Table 5b)
-**Source** Intake-EIOD-Methods-Paper-Jan2026-Final.pdf, Tables 5a–5b (p. 20); method p. 4; Annex 1 Part II (p. 17)
+**Source** [Intake-EIOD-Methods-Paper-Jan2026-Final.pdf](https://www.intake.org/sites/default/files/2026-01/Intake-EIOD-Methods-Paper-Jan2026-Final.pdf), Tables 5a–5b (p. 20); method p. 4; Annex 1 Part II (p. 17)
 **Verified by** `eiod_validate.do` Parts B, G, H, J
 
 Documented together because they are the same construction with one criterion swapped — and because **they are nested, not independent**. See §5; it changes how they may be reported.

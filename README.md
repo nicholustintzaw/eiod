@@ -10,7 +10,7 @@ subtitle: "Environmental Impact of Diets: Tables 3, 4a–4g, 5a and 5b as Stata 
 [![Stata](https://img.shields.io/badge/Stata-18-1a5f7a)](https://www.stata.com)
 [![R companion: reiod](https://img.shields.io/badge/R%20companion-reiod-2d6e2d)](https://github.com/nicholustintzaw/reiod)
 
-A small set of Stata commands implementing the metrics in **Intake-EIOD-Methods-Paper-Jan2026-Final.pdf**. No `.ado` installation, no SSC dependencies — plain do-files you load at the top of a session.
+A small set of Stata commands implementing the metrics in **[Intake-EIOD-Methods-Paper-Jan2026-Final.pdf](https://www.intake.org/sites/default/files/2026-01/Intake-EIOD-Methods-Paper-Jan2026-Final.pdf)**. No `.ado` installation, no SSC dependencies — plain do-files you load at the top of a session.
 
 **Stata 18** · **v0.1.0** · **2026-10-14**
 
@@ -341,9 +341,9 @@ and `functions/dta/eiod_cutoffs_wide_check.csv`.
 
 # 11. Acknowledgements
 
-The metric definitions and all 616 cut-off values are **Intake's**, from *Methods for Assessing
-Healthy, Environmentally Sustainable Diets Globally* (Intake — Center for Dietary Assessment,
-2026). This package implements them; it did not derive them.
+The metric definitions and all 616 cut-off values are **Intake's**, from
+[*Methods for Assessing Healthy, Environmentally Sustainable Diets Globally*](https://www.intake.org/sites/default/files/2026-01/Intake-EIOD-Methods-Paper-Jan2026-Final.pdf)
+(Intake — Center for Dietary Assessment, 2026). This package implements them; it did not derive them.
 
 The code, documentation and verification suite in this repository were written with the
 assistance of **Claude (Anthropic)**, used as a coding and writing assistant throughout

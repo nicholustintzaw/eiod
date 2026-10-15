@@ -1,7 +1,7 @@
 # `eiod_fn_03_relative.do` — Tables 4a–4g, relative benchmark metrics
 
 **Defines** `eiod_relative`
-**Source** Intake-EIOD-Methods-Paper-Jan2026-Final.pdf, Tables 4a–4g (pp. 17–19), method p. 3
+**Source** [Intake-EIOD-Methods-Paper-Jan2026-Final.pdf](https://www.intake.org/sites/default/files/2026-01/Intake-EIOD-Methods-Paper-Jan2026-Final.pdf), Tables 4a–4g (pp. 17–19), method p. 3
 **Reads** `eiod_cutoffs.dta`, rows where `metric == "rel"`
 **Verified by** `eiod_validate.do` Part E (all 10 bands × 8 groups) and Part I
 

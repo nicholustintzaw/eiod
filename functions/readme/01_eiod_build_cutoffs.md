@@ -1,7 +1,7 @@
 # `eiod_build_cutoffs.do` — the reference dataset, and exactly how exact it is
 
 **Builds** `eiod_cutoffs.dta` (616 rows) from `eiod_cutoffs.csv`
-**Source** Intake-EIOD-Methods-Paper-Jan2026-Final.pdf — Table 3 and Tables 4a–4g
+**Source** [Intake-EIOD-Methods-Paper-Jan2026-Final.pdf](https://www.intake.org/sites/default/files/2026-01/Intake-EIOD-Methods-Paper-Jan2026-Final.pdf) — Table 3 and Tables 4a–4g
 **Verified by** `eiod_validate.do` Parts A and B
 
 This page answers four questions that have been asked about the numbers: what the two value columns mean, how eutrophication is handled, where the Table 5a/5b cut-offs are, and whether the stored values are really the published ones.

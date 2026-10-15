@@ -15,6 +15,7 @@
                     requires it.
 
   ** SOURCE         Intake-EIOD-Methods-Paper-Jan2026-Final.pdf, p.3
+  **                https://www.intake.org/sites/default/files/2026-01/Intake-EIOD-Methods-Paper-Jan2026-Final.pdf
                       i.   Male   0-1.9 yr      v.    Female 0-1.9 yr
                       ii.  Male   2-4.9 yr      vi.   Female 2-4.9 yr
                       iii. Male   5-9.9 yr      vii.  Female 5-9.9 yr

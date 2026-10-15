@@ -3,7 +3,7 @@
 **Intake dietary environmental impact metrics, as Stata commands.**
 
 Tables 3, 4a–4g, 5a and 5b of
-*Methods for Assessing Healthy, Environmentally Sustainable Diets Globally*
+[*Methods for Assessing Healthy, Environmentally Sustainable Diets Globally*](https://www.intake.org/sites/default/files/2026-01/Intake-EIOD-Methods-Paper-Jan2026-Final.pdf)
 (Intake, 2026), implemented as plain do-files.
 
 [Repository on GitHub](https://github.com/nicholustintzaw/eiod) ·
@@ -75,9 +75,9 @@ value as an input.
 
 ## Acknowledgements
 
-The metric definitions and all 616 cut-off values are **Intake's**, from *Methods for Assessing
-Healthy, Environmentally Sustainable Diets Globally* (Intake — Center for Dietary Assessment,
-2026). This package implements them; it did not derive them.
+The metric definitions and all 616 cut-off values are **Intake's**, from
+[*Methods for Assessing Healthy, Environmentally Sustainable Diets Globally*](https://www.intake.org/sites/default/files/2026-01/Intake-EIOD-Methods-Paper-Jan2026-Final.pdf)
+(Intake — Center for Dietary Assessment, 2026). This package implements them; it did not derive them.
 
 The code, documentation and verification suite were written with the assistance of **Claude
 (Anthropic)**, used as a coding and writing assistant throughout development. All

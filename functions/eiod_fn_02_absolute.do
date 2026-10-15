@@ -15,6 +15,7 @@
                     per capita daily planetary boundary, and 0 if it does not.
 
   ** SOURCE         Intake-EIOD-Methods-Paper-Jan2026-Final.pdf
+  **                https://www.intake.org/sites/default/files/2026-01/Intake-EIOD-Methods-Paper-Jan2026-Final.pdf
                       Table 3, p.16  "Cut-Offs by Demographic Group for
                                       Absolute Threshold Metrics"
                       Method, p.3    thresholds follow Moberg et al. (2020)

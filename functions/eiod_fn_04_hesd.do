@@ -16,6 +16,7 @@
                     sub-indicator alongside the combined measure.
 
   ** SOURCE         Intake-EIOD-Methods-Paper-Jan2026-Final.pdf
+  **                https://www.intake.org/sites/default/files/2026-01/Intake-EIOD-Methods-Paper-Jan2026-Final.pdf
                       Table 5a, p.20
                       Method,   p.4
                       Annex 1 Part II, p.17

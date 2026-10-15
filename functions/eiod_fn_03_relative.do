@@ -15,6 +15,7 @@
                     environmental impacts.
 
   ** SOURCE         Intake-EIOD-Methods-Paper-Jan2026-Final.pdf
+  **                https://www.intake.org/sites/default/files/2026-01/Intake-EIOD-Methods-Paper-Jan2026-Final.pdf
                       Table 4a p.16 total land use      Table 4e p.18 water use
                       Table 4b p.17 arable land use     Table 4f p.19 eutrophication
                       Table 4c p.17 pasture land use    Table 4g p.19 biodiversity loss

@@ -1,7 +1,7 @@
 # `eiod_fn_02_absolute.do` — Table 3, absolute threshold metrics
 
 **Defines** `eiod_absolute`
-**Source** Intake-EIOD-Methods-Paper-Jan2026-Final.pdf, Table 3 (p. 16); method p. 3
+**Source** [Intake-EIOD-Methods-Paper-Jan2026-Final.pdf](https://www.intake.org/sites/default/files/2026-01/Intake-EIOD-Methods-Paper-Jan2026-Final.pdf), Table 3 (p. 16); method p. 3
 **Reads** `eiod_cutoffs.dta`, rows where `metric == "abs"`
 **Verified by** `eiod_validate.do` Parts A, C, D, I
 

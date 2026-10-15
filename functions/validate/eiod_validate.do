@@ -3,6 +3,7 @@
 *
 *  PURPOSE  Prove that the eiod_* commands reproduce Tables 3, 4a-4g, 5a and 5b
 *           of Intake-EIOD-Methods-Paper-Jan2026-Final.pdf.
+*           https://www.intake.org/sites/default/files/2026-01/Intake-EIOD-Methods-Paper-Jan2026-Final.pdf
 *
 *           Every check is an assert. If this do-file runs to the end, the
 *           implementation matches the published tables on all tested points.
