@@ -1,0 +1,44 @@
+cff-version: 1.2.0
+message: "If you use this package, please cite both the package and the methods paper it implements."
+title: "eiod: Intake dietary environmental impact metrics for Stata"
+abstract: >-
+  A Stata implementation of the absolute threshold, relative benchmark and
+  composite dietary environmental impact metrics defined in Intake's
+  Environmental Impacts of Diets methods paper. The package implements the
+  published metric cut-offs; it does not contain the Environmental Impacts of
+  Foods database. A companion R implementation is available as reiod.
+type: software
+authors:
+  - given-names: "Nicholus Tint"
+    family-names: "Zaw"
+    email: "n.t.zaw@cgiar.org"
+    affiliation: "International Food Policy Research Institute (IFPRI)"
+version: 0.1.0
+date-released: 2026-10-14
+license: MIT
+repository-code: "https://github.com/nicholustintzaw/eiod"
+url: "https://nicholustintzaw.github.io/eiod/"
+keywords:
+  - Stata
+  - dietary assessment
+  - environmental impact
+  - planetary health
+  - sustainable diets
+  - food systems
+references:
+  - type: report
+    title: "Methods for Assessing Healthy, Environmentally Sustainable Diets Globally"
+    authors:
+      - name: "Intake - Center for Dietary Assessment"
+    year: 2026
+    notes: >-
+      Source of the metric definitions and of every cut-off value shipped in
+      functions/dta/. The preferred citation form has been put to Intake and
+      this entry will be updated when they reply.
+  - type: software
+    title: "reiod: Dietary Environmental Impact Metrics from the Intake EIOD Framework"
+    authors:
+      - given-names: "Nicholus Tint"
+        family-names: "Zaw"
+    notes: "The companion R implementation. Both read the same cut-off CSV."
+    repository-code: "https://github.com/nicholustintzaw/reiod"

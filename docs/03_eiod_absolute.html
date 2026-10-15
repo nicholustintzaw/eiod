@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>03 - eiod_absolute: Table 3 absolute threshold metrics</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+  <style type="text/css">
+:root {
+--ink: #1d2430;
+--ink-soft: #4a5568;
+--ink-faint: #6b7684;
+--rule: #dde3ea;
+--rule-soft: #eef2f6;
+--paper: #ffffff;
+--tint: #f6f8fa;
+--accent: #2f5d8a;
+--accent-dk: #1f4160;
+--accent-bg: #eaf1f8;
+--good: #2d6e2d;
+--good-bg: #edf7ed;
+--warn: #8a5a00;
+--warn-bg: #fff8e8;
+--bad: #a32b2b;
+--bad-bg: #fdeeee;
+--mono: "Cascadia Mono", "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+--sans: "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+}
+html { -webkit-text-size-adjust: 100%; }
+body {
+font-family: var(--sans);
+font-size: 16px;
+line-height: 1.62;
+color: var(--ink);
+background: var(--paper);
+max-width: 980px;
+margin: 0 auto;
+padding: 2.5rem 1.6rem 6rem;
+hyphens: none;
+}
+
+header#title-block-header { margin-bottom: 2.2rem; }
+h1.title {
+font-size: 1.95rem;
+line-height: 1.25;
+font-weight: 650;
+letter-spacing: -0.012em;
+margin: 0 0 .9rem;
+padding-bottom: .9rem;
+border-bottom: 3px solid var(--accent);
+color: var(--ink);
+}
+p.subtitle { color: var(--ink-soft); font-size: 1.05rem; margin-top: -.4rem; }
+
+h1, h2, h3, h4 { font-weight: 640; letter-spacing: -0.008em; color: var(--ink); }
+h1:not(.title) {
+font-size: 1.6rem;
+margin: 3rem 0 1rem;
+padding-bottom: .4rem;
+border-bottom: 2px solid var(--rule);
+}
+h2 {
+font-size: 1.32rem;
+margin: 2.6rem 0 .9rem;
+padding-bottom: .35rem;
+border-bottom: 1px solid var(--rule);
+}
+h3 { font-size: 1.1rem; margin: 2rem 0 .6rem; color: var(--accent); }
+h4 { font-size: 1rem; margin: 1.5rem 0 .5rem; color: var(--ink-soft); }
+
+nav#TOC {
+background: var(--tint);
+border: 1px solid var(--rule);
+border-left: 4px solid var(--accent);
+border-radius: 6px;
+padding: 1.1rem 1.4rem .9rem;
+margin: 0 0 2.6rem;
+font-size: .93rem;
+}
+nav#TOC::before {
+content: "Contents";
+display: block;
+font-weight: 650;
+font-size: .78rem;
+letter-spacing: .09em;
+text-transform: uppercase;
+color: var(--ink-faint);
+margin-bottom: .5rem;
+}
+nav#TOC ul { list-style: none; padding-left: 1rem; margin: .25rem 0; }
+nav#TOC > ul { padding-left: 0; }
+nav#TOC li { margin: .18rem 0; }
+nav#TOC a { color: var(--ink-soft); text-decoration: none; }
+nav#TOC a:hover { color: var(--accent); text-decoration: underline; }
+
+table {
+border-collapse: collapse;
+width: 100%;
+margin: 1.4rem 0 1.8rem;
+font-size: .91rem;
+font-variant-numeric: tabular-nums;
+}
+caption {
+caption-side: top;
+text-align: left;
+font-size: .85rem;
+color: var(--ink-faint);
+padding-bottom: .45rem;
+}
+thead th {
+background: var(--accent-bg);
+color: var(--ink);
+font-weight: 640;
+text-align: left;
+border-bottom: 2px solid var(--accent);
+padding: .55rem .7rem;
+vertical-align: bottom;
+}
+tbody td, tbody th {
+padding: .48rem .7rem;
+border-bottom: 1px solid var(--rule-soft);
+vertical-align: top;
+}
+tbody tr:nth-child(even) { background: #fbfcfd; }
+tbody tr:hover { background: var(--accent-bg); }
+tbody td:first-child { font-weight: 500; }
+
+td[style*="text-align: right"], th[style*="text-align: right"] {
+font-variant-numeric: tabular-nums;
+}
+
+code {
+font-family: var(--mono);
+font-size: .875em;
+background: var(--tint);
+border: 1px solid var(--rule);
+border-radius: 3px;
+padding: .08em .35em;
+color: #2b3a4a;
+}
+pre {
+background: var(--tint);
+border: 1px solid var(--rule);
+border-left: 4px solid var(--accent);
+border-radius: 5px;
+padding: .9rem 1.1rem;
+overflow-x: auto;
+font-size: .86rem;
+line-height: 1.5;
+}
+pre code { background: none; border: none; padding: 0; font-size: 1em; }
+
+blockquote {
+margin: 1.4rem 0;
+padding: .85rem 1.2rem;
+background: var(--warn-bg);
+border-left: 4px solid #c9a227;
+border-radius: 0 5px 5px 0;
+color: var(--ink);
+}
+blockquote p:first-child { margin-top: 0; }
+blockquote p:last-child { margin-bottom: 0; }
+
+svg { display: block; max-width: 100%; height: auto; margin: 1.6rem auto; }
+figure { margin: 1.8rem 0; }
+figcaption { font-size: .86rem; color: var(--ink-faint); text-align: center; }
+
+a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:hover { color: #1f4160; }
+hr { border: none; border-top: 1px solid var(--rule); margin: 2.6rem 0; }
+strong { font-weight: 640; }
+ul, ol { padding-left: 1.4rem; }
+li { margin: .3rem 0; }
+li > ul, li > ol { margin: .25rem 0; }
+
+body > p > em:only-child { color: var(--ink-faint); font-size: .9rem; }
+
+math { font-size: 1.02em; }
+
+@media print {
+body { max-width: none; padding: 0; font-size: 11pt; }
+nav#TOC { break-after: page; }
+h1:not(.title), h2 { break-after: avoid; }
+table, pre, svg, blockquote { break-inside: avoid; }
+tbody tr:hover { background: none; }
+a { color: var(--ink); text-decoration: none; }
+}
+@media (max-width: 680px) {
+body { padding: 1.4rem 1rem 4rem; font-size: 15px; }
+table { font-size: .84rem; }
+h1.title { font-size: 1.55rem; }
+}
+</style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">03 - eiod_absolute: Table 3 absolute threshold
+metrics</h1>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#eiod_fn_02_absolute.do-table-3-absolute-threshold-metrics" id="toc-eiod_fn_02_absolute.do-table-3-absolute-threshold-metrics"><code>eiod_fn_02_absolute.do</code>
+— Table 3, absolute threshold metrics</a>
+<ul>
+<li><a href="#the-original-table" id="toc-the-original-table">1. The
+original table</a></li>
+<li><a href="#the-workflow" id="toc-the-workflow">2. The workflow</a>
+<ul>
+<li><a href="#step-3b-the-one-unit-conversion-in-the-package" id="toc-step-3b-the-one-unit-conversion-in-the-package">STEP 3b — the
+one unit conversion in the package</a></li>
+<li><a href="#the-converted-value-is-kept-not-discarded" id="toc-the-converted-value-is-kept-not-discarded">The converted value
+is kept, not discarded</a></li>
+<li><a href="#three-things-about-this-are-deliberate" id="toc-three-things-about-this-are-deliberate">Three things about this
+are deliberate</a></li>
+<li><a href="#step-3-eight-numbers-asserted" id="toc-step-3-eight-numbers-asserted">STEP 3 — eight numbers,
+asserted</a></li>
+<li><a href="#step-4-the-comparison" id="toc-step-4-the-comparison">STEP
+4 — the comparison</a></li>
+<li><a href="#output-coding" id="toc-output-coding">Output
+coding</a></li>
+</ul></li>
+<li><a href="#syntax" id="toc-syntax">3. Syntax</a></li>
+<li><a href="#the-input-must-already-be-a-respondent-day-total" id="toc-the-input-must-already-be-a-respondent-day-total">4. The input
+must already be a respondent-DAY total</a></li>
+<li><a href="#related" id="toc-related">5. Related</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="eiod_fn_02_absolute.do-table-3-absolute-threshold-metrics"><code>eiod_fn_02_absolute.do</code>
+— Table 3, absolute threshold metrics</h1>
+<p><strong>Defines</strong> <code>eiod_absolute</code>
+<strong>Source</strong> Intake-EIOD-Methods-Paper-Jan2026-Final.pdf,
+Table 3 (p. 16); method p. 3 <strong>Reads</strong>
+<code>eiod_cutoffs.dta</code>, rows where <code>metric == &quot;abs&quot;</code>
+<strong>Verified by</strong> <code>eiod_validate.do</code> Parts A, C,
+D, I</p>
+<hr />
+<h2 id="the-original-table">1. The original table</h2>
+<p>Table 3, <em>“Cut-Offs by Demographic Group for Absolute Threshold
+Metrics”</em> — <strong>7 indicator rows × 8 demographic
+columns</strong>, one number per cell:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Indicator</th>
+<th>Unit</th>
+<th>M 0–1.9</th>
+<th>M 2–4.9</th>
+<th>…</th>
+<th>F 10+</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Total land use</td>
+<td>m²·year</td>
+<td>&lt; …</td>
+<td>&lt; …</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>Arable land use</td>
+<td>m²·year</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Pasture land use</td>
+<td>m²·year</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>GHG emissions</td>
+<td>kg CO₂eq</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Eutrophication</td>
+<td>kg PO₄³⁻eq</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>Water use</td>
+<td>litres</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Biodiversity loss</td>
+<td>PDF·year</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Each cell is that group’s share of the <strong>per capita daily
+planetary boundary</strong>, following Moberg et al. (2020) and
+Hallström et al. (2022), assuming a 7.7 billion population and converted
+to an average per capita <em>daily</em> threshold.</p>
+<p><strong>This is a pass/fail against a planetary boundary.</strong> It
+is not a statement about how a diet compares with other diets — that is
+<code>eiod_relative</code>, Tables 4a–4g.</p>
+<h2 id="the-workflow">2. The workflow</h2>
+<pre><code> STEP 1   validate the indicator keyword              one of 7, else exit 198
+ STEP 2   validate output names; group ∈ 1..8         else exit 459
+ STEP 2b  QC the input variable                       storage, sign, underflow, scale
+ STEP 3   read the 8 thresholds into a temporary FRAME
+ STEP 3b  put the USER&#39;S values on this table&#39;s unit  ← eutrophication only
+ STEP 4   apply the threshold, group by group    ← THE CALCULATION
+ STEP 5   value-label the result
+ STEP 6   report and return</code></pre>
+<h3 id="step-3b-the-one-unit-conversion-in-the-package">STEP 3b — the
+one unit conversion in the package</h3>
+<p><strong>Six of the seven indicators pass through untouched.</strong>
+The EIOF database, the methods paper and both cut-off tables agree on
+their units, so <code>convfac</code> is 1 and nothing happens.</p>
+<p><strong>Eutrophication is the exception</strong>, because the EIOF
+country databases report it as <code>Eutr. (g PO43-e/kg)</code> — in
+grams — while Table 3 is printed in kilograms:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">tempvar</span> vcmp</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">local</span> convfac = 1</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">local</span> convnote <span class="st">&quot;&quot;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> <span class="st">&quot;`ind&#39;&quot;</span> == <span class="st">&quot;eutroph&quot;</span> {</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">local</span> convfac = 0.001</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">local</span> convnote <span class="st">&quot;eutroph: your values divided by 1000 (g -&gt; kg PO4(3-)eq) to match Table 3&quot;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="kw">qui</span> <span class="kw">gen</span> <span class="kw">double</span> <span class="ot">`vcmp&#39;</span> = <span class="ot">`value&#39;</span> * <span class="ot">`convfac&#39;</span></span></code></pre></div>
+<h3 id="the-converted-value-is-kept-not-discarded">The converted value
+is kept, not discarded</h3>
+<p>A conversion the user cannot see is a conversion the user has to take
+on trust. So the command leaves
+<strong><code>&lt;yourvar&gt;_kg</code></strong> behind — for
+<code>eutr_ado</code> you get <code>eutr_ado_kg</code> — and the whole
+chain reads off one table:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>. <span class="ot">list</span> eutr_ado eutr_ado_kg thr_eutroph abs_eutroph <span class="kw">in</span> 1/4, <span class="kw">noobs</span> <span class="fu">abbrev</span>(14)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  +---------------------------------------------------------------------+</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  |  eutr_ado         eutr_ado_kg   thr_eutroph             abs_eutroph |</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  |---------------------------------------------------------------------|</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  |  28.12399    .028123990101136    .021513377   At <span class="kw">or</span> above threshold |</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  | 13.702354    .013702354382423    .021513377         Below threshold |</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  | 10.901663    .010901662567893   .0267453228         Below threshold |</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  | 54.282283    .054282282809918   .0267453228   At <span class="kw">or</span> above threshold |</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  +---------------------------------------------------------------------+</span></code></pre></div>
+<p>grams → kilograms → the published Table 3 threshold → the result.</p>
+<p><strong>The comparison uses that very variable</strong>, not a
+parallel copy, so what you see is literally what was tested. The demo
+asserts it:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">assert</span> <span class="fu">reldif</span>(eutr_ado_kg, eutr_ado / 1000) &lt; 1e-12 <span class="kw">if</span> !<span class="fu">mi</span>(eutr_ado)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">assert</span> abs_eutroph == (eutr_ado_kg &lt; thr_eutroph)   <span class="kw">if</span> !<span class="fu">mi</span>(eutr_ado_kg)</span></code></pre></div>
+<p>Housekeeping: the name is honoured by <code>replace</code>, a
+collision without <code>replace</code> is an error like any other
+<code>generate</code>, and a name longer than 32 characters is refused
+with a message telling you to shorten the input variable.
+<code>r(convvar)</code> returns the name, <code>r(convfac)</code> the
+multiplier.</p>
+<p>In the R package the vector API means there is no dataset to write
+into, so the same information lands in the detail frame:
+<code>eiod_absolute_threshold(..., details = TRUE)</code> returns a
+<code>value_kg</code> column alongside <code>value</code>,
+<code>cutoff</code> and <code>below</code>.</p>
+<h3 id="three-things-about-this-are-deliberate">Three things about this
+are deliberate</h3>
+<ol type="1">
+<li><strong>It converts the user’s value, never the published
+cut-off.</strong> <code>eiod_cutoffs.dta</code> holds exactly what the
+paper prints for all 616 rows, so it can be checked line by line against
+the PDF. Before 2026-10-14 the 80 Table 4f rows were stored pre-divided
+and matched nothing in the source document.</li>
+<li><strong>It is announced in the output</strong>, every time, under
+<code>unit:</code>. It is the only place in the package where a number
+you supplied is altered before use, and it should be visible in your
+log.</li>
+<li><strong>It is one local in one file.</strong> If Intake confirms a
+different reading, the fix is <code>local convfac</code> and nothing
+else — the reference data needs no change, because it was never
+adjusted.</li>
+</ol>
+<p><code>eiod_relative</code> has no equivalent step: Table 4f is
+printed in grams, so a gram input needs no conversion there.</p>
+<blockquote>
+<p><strong>Supply eutrophication in GRAMS.</strong> See
+<code>01_eiod_build_cutoffs.md</code> §2 for the evidence, and note that
+the unit reading is an inference Intake has not yet confirmed.</p>
+</blockquote>
+<h3 id="step-3-eight-numbers-asserted">STEP 3 — eight numbers,
+asserted</h3>
+<div class="sourceCode" id="cb5"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">qui</span> <span class="kw">keep</span> <span class="kw">if</span> metric == <span class="st">&quot;abs&quot;</span> &amp; indicator == <span class="st">&quot;`ind&#39;&quot;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> _N != 8 { ... <span class="kw">exit</span> 459 }</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">qui</span> <span class="kw">isid</span> demogroup</span></code></pre></div>
+<p>Read in a <code>frame</code>, so the analyst’s data in memory is
+never touched. If the cut-off file does not hold exactly eight
+thresholds for the indicator — one per group, no duplicates — the
+command stops rather than computing against a partial table.</p>
+<h3 id="step-4-the-comparison">STEP 4 — the comparison</h3>
+<div class="sourceCode" id="cb6"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">qui</span> <span class="kw">gen</span> <span class="kw">byte</span> <span class="ot">`generate&#39;</span> = .</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="kw">forvalues</span> g = 1/8 {</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">qui</span> <span class="kw">replace</span> <span class="ot">`generate&#39;</span> = (<span class="ot">`value&#39;</span> &lt; <span class="ot">`thr`g&#39;</span>&#39;) <span class="co">///</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> <span class="ot">`group&#39;</span> == <span class="ot">`g&#39;</span> &amp; !<span class="fu">mi</span>(<span class="ot">`value&#39;</span>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p><strong>Strictly <code>&lt;</code>, and that is deliberate.</strong>
+The published cut-offs carry a “&lt;” sign, so a diet sitting
+<em>exactly on</em> the threshold is <strong>not</strong> below it and
+is coded 0. <code>eiod_validate.do</code> Part C tests a value placed
+precisely on each threshold.</p>
+<p><strong>The <code>!mi()</code> guard is load-bearing.</strong> In
+Stata missing sorts <em>above</em> every real number, so
+<code>. &lt; threshold</code> evaluates to <strong>0</strong> — a
+respondent with no impact data would be silently coded as
+<em>exceeding</em> the boundary. The guard leaves them missing instead.
+Part D tests this.</p>
+<h3 id="output-coding">Output coding</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Value</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>Below threshold</td>
+</tr>
+<tr class="even">
+<td>0</td>
+<td>At or above threshold</td>
+</tr>
+<tr class="odd">
+<td>.</td>
+<td>impact or group not observed</td>
+</tr>
+</tbody>
+</table>
+<p><code>threshvar()</code> optionally stores the threshold each
+respondent was compared against, so a reader can see the number without
+opening the cut-off file.</p>
+<h2 id="syntax">3. Syntax</h2>
+<div class="sourceCode" id="cb7"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>eiod_absolute INDICATOR , Value(varname) Group(varname) GENerate(<span class="bn">name</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    [ THRESHvar(<span class="bn">name</span>) CUToffs(<span class="fu">string</span>) <span class="kw">replace</span> <span class="ot">strict</span> nocheck ]</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th>Keyword</th>
+<th>Unit</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>landtotal</code> <code>landarable</code>
+<code>landpasture</code></td>
+<td>m²·year</td>
+</tr>
+<tr class="even">
+<td><code>ghg</code></td>
+<td>kg CO₂eq</td>
+</tr>
+<tr class="odd">
+<td><code>eutroph</code></td>
+<td>kg PO₄³⁻eq</td>
+</tr>
+<tr class="even">
+<td><code>water</code></td>
+<td>litres</td>
+</tr>
+<tr class="odd">
+<td><code>biodiv</code></td>
+<td>PDF·year</td>
+</tr>
+</tbody>
+</table>
+<p>The keyword picks the <strong>cut-off row</strong>. Your variable
+goes in <code>value()</code> and may be named anything.</p>
+<p><strong>Returns</strong> <code>r(N)</code>, <code>r(N_miss)</code>,
+<code>r(pct)</code>, <code>r(ind)</code>, <code>r(unit)</code>.</p>
+<h2 id="the-input-must-already-be-a-respondent-day-total">4. The input
+must already be a respondent-DAY total</h2>
+<p><code>value()</code> is the impact of everything the person ate that
+day, <strong>already summed across every ingredient</strong>. The
+command cannot tell a per-ingredient value from a daily total — it will
+happily compare a single ingredient against a whole-day planetary
+boundary share and report a very high pass rate. The scale check in STEP
+2b catches gross cases; it cannot catch a factor of three.</p>
+<h2 id="related">5. Related</h2>
+<ul>
+<li><code>eiod_fn_03_relative.do</code> — the same seven indicators,
+positioned in a global distribution</li>
+<li><code>eiod_fn_04_hesd.do</code> — calls this command for the
+biodiversity criterion of Table 5a</li>
+<li><code>eiod_fn_06_batch.do</code> — <code>eiod_absolute_all</code>
+runs this across several indicators at once</li>
+</ul>
+<p><em>Last updated 2026-10-05.</em></p>
+</body>
+</html>

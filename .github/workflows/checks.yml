@@ -1,0 +1,172 @@
+﻿name: checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# ---------------------------------------------------------------------------- #
+# WHAT THIS CAN AND CANNOT DO
+#
+# Stata is licensed commercial software and GitHub's hosted runners do not have
+# it. So this workflow CANNOT run eiod_validate.do, eiod_demo.do or
+# eiod_build_cutoffs.do, and there is deliberately no "tests passing" badge on
+# the README pretending otherwise. Those are run locally and their results are
+# recorded in the release notes.
+#
+# What it CAN do is check structure - and the checks below are the ones that
+# catch the things that have actually gone wrong in this project.
+# ---------------------------------------------------------------------------- #
+
+permissions: read-all
+
+jobs:
+  structure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # ---------------------------------------------------------------- #
+      # 1. The reference data must not drift from the R package's copy.
+      #
+      # eiod and reiod read the SAME 616-row CSV. Nothing but this check
+      # stops the two copies diverging, and the first symptom of drift
+      # would be two papers reporting different prevalences from the same
+      # survey. The expected digest is committed; changing the CSV means
+      # consciously updating it here AND in reiod.
+      # ---------------------------------------------------------------- #
+      # The digest is taken over the content with carriage returns STRIPPED,
+      # and `sha256sum -c` is deliberately not used. Both for the same reason:
+      # the first version of this check failed on its first run.
+      #
+      #   * .gitattributes normalises *.csv to LF in the repository, so a
+      #     digest computed from a Windows working copy (CRLF) never matches
+      #     what a Linux runner checks out. It was comparing line endings, not
+      #     content.
+      #   * `sha256sum -c` resolves the filename inside the digest file
+      #     relative to the CURRENT directory, not to the digest file - so a
+      #     bare "eiod_cutoffs.csv" was looked for in the repo root.
+      #
+      # Stripping CR gives one number that is identical on every platform AND
+      # identical to the one reiod computes from its own copy, which is the
+      # whole point: this guards the 616 VALUES against drift.
+      - name: cut-off CSV matches the recorded digest
+        run: |
+          recorded=$(cat functions/dta/eiod_cutoffs.sha256)
+          actual=$(tr -d '\r' < functions/dta/eiod_cutoffs.csv | sha256sum | cut -d' ' -f1)
+          echo "recorded: $recorded"
+          echo "actual:   $actual"
+          if [ "$recorded" != "$actual" ]; then
+            echo "" >&2
+            echo "The cut-off CSV has changed." >&2
+            echo "If that was intentional, update BOTH repositories:" >&2
+            echo "  1. in eiod:  tr -d '\\r' < functions/dta/eiod_cutoffs.csv \\" >&2
+            echo "                 | sha256sum | cut -d' ' -f1 > functions/dta/eiod_cutoffs.sha256" >&2
+            echo "  2. copy the same CSV into reiod/data-raw/ and rebuild its data" >&2
+            exit 1
+          fi
+          echo "unchanged"
+
+      - name: cut-off CSV still has 616 rows and the expected header
+        run: |
+          rows=$(( $(wc -l < functions/dta/eiod_cutoffs.csv) - 1 ))
+          echo "data rows: $rows"
+          test "$rows" -eq 616
+          head -1 functions/dta/eiod_cutoffs.csv | grep -q '^metric,table,indicator,'
+          # the rescaling column must not come back - see readme/01 section 2
+          if head -1 functions/dta/eiod_cutoffs.csv | grep -q 'scale_to_db_unit'; then
+            echo "scale_to_db_unit has reappeared in the CSV; nothing may be rescaled" >&2
+            exit 1
+          fi
+
+      # ---------------------------------------------------------------- #
+      # 2. Every command file declares a version.
+      # ---------------------------------------------------------------- #
+      - name: every function file has a version statement
+        run: |
+          fail=0
+          for f in functions/eiod_fn_*.do functions/eiod_load_functions.do; do
+            if ! grep -qE '^[[:space:]]*version[[:space:]]+[0-9]' "$f"; then
+              echo "no version statement: $f" >&2; fail=1
+            fi
+          done
+          exit $fail
+
+      # ---------------------------------------------------------------- #
+      # 3. No absolute path has crept into a committed do-file.
+      #
+      # This is the single most common way a shared Stata package breaks
+      # on someone else's machine.
+      # ---------------------------------------------------------------- #
+      - name: no hardcoded absolute paths
+        run: |
+          # `path/to` marks an illustrative path inside an error message - those
+          # are help text telling the user what to set, not a real dependency.
+          hits=$(grep -rnE '"[A-Za-z]:/|"/home/|"/Users/' --include='*.do' functions/ \
+                 | grep -v 'path/to' || true)
+          if [ -n "$hits" ]; then
+            echo "$hits"
+            echo "absolute path found in a do-file - use a global or a relative path" >&2
+            exit 1
+          fi
+          echo "none found"
+
+      # ---------------------------------------------------------------- #
+      # 4. The readme sources are numbered contiguously.
+      # ---------------------------------------------------------------- #
+      - name: readme files numbered 01..n with no gaps
+        run: |
+          n=$(ls functions/readme/*.md | wc -l)
+          # printf, not `seq -w`: seq pads to the width of the LARGEST value, so
+          # with 6 files it yields 1..6 and never matches 01_*.md.
+          for i in $(seq 1 "$n"); do
+            p=$(printf '%02d' "$i")
+            if ! ls functions/readme/${p}_*.md >/dev/null 2>&1; then
+              echo "missing readme number $p" >&2; exit 1
+            fi
+          done
+          echo "$n readme files, contiguous"
+
+      # ---------------------------------------------------------------- #
+      # 5. docs/ is in step with its markdown sources.
+      #
+      # docs/ is generated. If someone edits a readme and forgets to run
+      # build_docs.sh, the published site silently goes stale - which is
+      # exactly what happened when the .md and .html lived side by side.
+      # ---------------------------------------------------------------- #
+      # PIN THE VERSION. Different pandoc releases emit different HTML - the
+      # generator meta tag at minimum - so an unpinned runner would diff
+      # against locally-built pages and fail forever, for a reason that looks
+      # nothing like its cause. 3.1.1 is the version RStudio ships, which is
+      # what build_docs.sh finds on the maintainer's machine.
+      #
+      # If you upgrade your local pandoc, bump this and rebuild docs/ in the
+      # same commit.
+      - uses: r-lib/actions/setup-pandoc@v2
+        with:
+          pandoc-version: '3.1.1'
+
+      - name: docs/ regenerates without changes
+        run: |
+          pandoc --version | head -1
+          ./build_docs.sh
+          if ! git diff --quiet -- docs/; then
+            echo "" >&2
+            echo "docs/ is out of date, OR this runner's pandoc differs from the" >&2
+            echo "one that built the committed pages." >&2
+            echo "  - if you edited functions/readme/*.md: run ./build_docs.sh and commit" >&2
+            echo "  - if every file differs on only a generator/meta line: the pinned" >&2
+            echo "    pandoc-version above no longer matches your local pandoc" >&2
+            echo "" >&2
+            git diff --stat -- docs/
+            exit 1
+          fi
+          echo "docs/ is current"
+
+      # ---------------------------------------------------------------- #
+      # 6. Citation metadata parses.
+      # ---------------------------------------------------------------- #
+      - name: CITATION.cff is valid YAML
+        run: python3 -c "import yaml,sys; yaml.safe_load(open('CITATION.cff')); print('ok')"

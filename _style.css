@@ -1,0 +1,212 @@
+/* ========================================================================== *
+   _style.css
+   Shared stylesheet for the standard-recipe workflow documentation.
+   Applied with:  pandoc x.md -o x.html --standalone --embed-resources
+                         --css=_style.css --toc --toc-depth=3 --mathml
+   ========================================================================== */
+
+:root {
+  --ink:        #1d2430;
+  --ink-soft:   #4a5568;
+  --ink-faint:  #6b7684;
+  --rule:       #dde3ea;
+  --rule-soft:  #eef2f6;
+  --paper:      #ffffff;
+  --tint:       #f6f8fa;
+  --accent:     #2f5d8a;
+  --accent-dk:  #1f4160;
+  --accent-bg:  #eaf1f8;
+  --good:       #2d6e2d;
+  --good-bg:    #edf7ed;
+  --warn:       #8a5a00;
+  --warn-bg:    #fff8e8;
+  --bad:        #a32b2b;
+  --bad-bg:     #fdeeee;
+  --mono: "Cascadia Mono", "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+  --sans: "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.62;
+  color: var(--ink);
+  background: var(--paper);
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 2.5rem 1.6rem 6rem;
+  hyphens: none;
+}
+
+/* ---------- title block --------------------------------------------------- */
+header#title-block-header { margin-bottom: 2.2rem; }
+
+h1.title {
+  font-size: 1.95rem;
+  line-height: 1.25;
+  font-weight: 650;
+  letter-spacing: -0.012em;
+  margin: 0 0 .9rem;
+  padding-bottom: .9rem;
+  border-bottom: 3px solid var(--accent);
+  color: var(--ink);
+}
+p.subtitle { color: var(--ink-soft); font-size: 1.05rem; margin-top: -.4rem; }
+
+/* ---------- headings ------------------------------------------------------ */
+h1, h2, h3, h4 { font-weight: 640; letter-spacing: -0.008em; color: var(--ink); }
+
+h1:not(.title) {
+  font-size: 1.6rem;
+  margin: 3rem 0 1rem;
+  padding-bottom: .4rem;
+  border-bottom: 2px solid var(--rule);
+}
+h2 {
+  font-size: 1.32rem;
+  margin: 2.6rem 0 .9rem;
+  padding-bottom: .35rem;
+  border-bottom: 1px solid var(--rule);
+}
+h3 { font-size: 1.1rem;  margin: 2rem 0 .6rem; color: var(--accent); }
+h4 { font-size: 1rem;    margin: 1.5rem 0 .5rem; color: var(--ink-soft); }
+
+/* ---------- table of contents -------------------------------------------- */
+nav#TOC {
+  background: var(--tint);
+  border: 1px solid var(--rule);
+  border-left: 4px solid var(--accent);
+  border-radius: 6px;
+  padding: 1.1rem 1.4rem .9rem;
+  margin: 0 0 2.6rem;
+  font-size: .93rem;
+}
+nav#TOC::before {
+  content: "Contents";
+  display: block;
+  font-weight: 650;
+  font-size: .78rem;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: .5rem;
+}
+nav#TOC ul { list-style: none; padding-left: 1rem; margin: .25rem 0; }
+nav#TOC > ul { padding-left: 0; }
+nav#TOC li { margin: .18rem 0; }
+nav#TOC a { color: var(--ink-soft); text-decoration: none; }
+nav#TOC a:hover { color: var(--accent); text-decoration: underline; }
+
+/* ---------- tables -------------------------------------------------------- */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1.4rem 0 1.8rem;
+  font-size: .91rem;
+  font-variant-numeric: tabular-nums;
+}
+caption {
+  caption-side: top;
+  text-align: left;
+  font-size: .85rem;
+  color: var(--ink-faint);
+  padding-bottom: .45rem;
+}
+thead th {
+  background: var(--accent-bg);
+  color: var(--ink);
+  font-weight: 640;
+  text-align: left;
+  border-bottom: 2px solid var(--accent);
+  padding: .55rem .7rem;
+  vertical-align: bottom;
+}
+tbody td, tbody th {
+  padding: .48rem .7rem;
+  border-bottom: 1px solid var(--rule-soft);
+  vertical-align: top;
+}
+tbody tr:nth-child(even) { background: #fbfcfd; }
+tbody tr:hover { background: var(--accent-bg); }
+tbody td:first-child { font-weight: 500; }
+
+/* numeric-looking columns read better right-aligned; pandoc emits
+   style="text-align: right;" when the markdown column is right-aligned */
+td[style*="text-align: right"], th[style*="text-align: right"] {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- code ---------------------------------------------------------- */
+code {
+  font-family: var(--mono);
+  font-size: .875em;
+  background: var(--tint);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  padding: .08em .35em;
+  color: #2b3a4a;
+}
+pre {
+  background: var(--tint);
+  border: 1px solid var(--rule);
+  border-left: 4px solid var(--accent);
+  border-radius: 5px;
+  padding: .9rem 1.1rem;
+  overflow-x: auto;
+  font-size: .86rem;
+  line-height: 1.5;
+}
+pre code { background: none; border: none; padding: 0; font-size: 1em; }
+
+/* ---------- blockquotes, used for callouts -------------------------------- */
+blockquote {
+  margin: 1.4rem 0;
+  padding: .85rem 1.2rem;
+  background: var(--warn-bg);
+  border-left: 4px solid #c9a227;
+  border-radius: 0 5px 5px 0;
+  color: var(--ink);
+}
+blockquote p:first-child { margin-top: 0; }
+blockquote p:last-child  { margin-bottom: 0; }
+
+/* ---------- figures / inline SVG ------------------------------------------ */
+svg { display: block; max-width: 100%; height: auto; margin: 1.6rem auto; }
+figure { margin: 1.8rem 0; }
+figcaption { font-size: .86rem; color: var(--ink-faint); text-align: center; }
+
+/* ---------- misc ---------------------------------------------------------- */
+a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:hover { color: #1f4160; }
+
+hr { border: none; border-top: 1px solid var(--rule); margin: 2.6rem 0; }
+
+strong { font-weight: 640; }
+
+ul, ol { padding-left: 1.4rem; }
+li { margin: .3rem 0; }
+li > ul, li > ol { margin: .25rem 0; }
+
+/* the trailing provenance paragraph */
+body > p > em:only-child { color: var(--ink-faint); font-size: .9rem; }
+
+/* math */
+math { font-size: 1.02em; }
+
+/* ---------- print --------------------------------------------------------- */
+@media print {
+  body { max-width: none; padding: 0; font-size: 11pt; }
+  nav#TOC { break-after: page; }
+  h1:not(.title), h2 { break-after: avoid; }
+  table, pre, svg, blockquote { break-inside: avoid; }
+  tbody tr:hover { background: none; }
+  a { color: var(--ink); text-decoration: none; }
+}
+
+@media (max-width: 680px) {
+  body { padding: 1.4rem 1rem 4rem; font-size: 15px; }
+  table { font-size: .84rem; }
+  h1.title { font-size: 1.55rem; }
+}

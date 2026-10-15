@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Known open questions
+    url: https://nicholustintzaw.github.io/eiod/01_eiod_build_cutoffs.html
+    about: The eutrophication unit reading is an open inference. Check section 2 before filing a methods query.
+  - name: R companion package (reiod)
+    url: https://github.com/nicholustintzaw/reiod
+    about: For issues with the R implementation rather than the Stata one.

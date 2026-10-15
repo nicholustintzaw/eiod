@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>eiod - changelog</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+</style>
+  <style type="text/css">
+:root {
+--ink: #1d2430;
+--ink-soft: #4a5568;
+--ink-faint: #6b7684;
+--rule: #dde3ea;
+--rule-soft: #eef2f6;
+--paper: #ffffff;
+--tint: #f6f8fa;
+--accent: #2f5d8a;
+--accent-dk: #1f4160;
+--accent-bg: #eaf1f8;
+--good: #2d6e2d;
+--good-bg: #edf7ed;
+--warn: #8a5a00;
+--warn-bg: #fff8e8;
+--bad: #a32b2b;
+--bad-bg: #fdeeee;
+--mono: "Cascadia Mono", "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+--sans: "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+}
+html { -webkit-text-size-adjust: 100%; }
+body {
+font-family: var(--sans);
+font-size: 16px;
+line-height: 1.62;
+color: var(--ink);
+background: var(--paper);
+max-width: 980px;
+margin: 0 auto;
+padding: 2.5rem 1.6rem 6rem;
+hyphens: none;
+}
+
+header#title-block-header { margin-bottom: 2.2rem; }
+h1.title {
+font-size: 1.95rem;
+line-height: 1.25;
+font-weight: 650;
+letter-spacing: -0.012em;
+margin: 0 0 .9rem;
+padding-bottom: .9rem;
+border-bottom: 3px solid var(--accent);
+color: var(--ink);
+}
+p.subtitle { color: var(--ink-soft); font-size: 1.05rem; margin-top: -.4rem; }
+
+h1, h2, h3, h4 { font-weight: 640; letter-spacing: -0.008em; color: var(--ink); }
+h1:not(.title) {
+font-size: 1.6rem;
+margin: 3rem 0 1rem;
+padding-bottom: .4rem;
+border-bottom: 2px solid var(--rule);
+}
+h2 {
+font-size: 1.32rem;
+margin: 2.6rem 0 .9rem;
+padding-bottom: .35rem;
+border-bottom: 1px solid var(--rule);
+}
+h3 { font-size: 1.1rem; margin: 2rem 0 .6rem; color: var(--accent); }
+h4 { font-size: 1rem; margin: 1.5rem 0 .5rem; color: var(--ink-soft); }
+
+nav#TOC {
+background: var(--tint);
+border: 1px solid var(--rule);
+border-left: 4px solid var(--accent);
+border-radius: 6px;
+padding: 1.1rem 1.4rem .9rem;
+margin: 0 0 2.6rem;
+font-size: .93rem;
+}
+nav#TOC::before {
+content: "Contents";
+display: block;
+font-weight: 650;
+font-size: .78rem;
+letter-spacing: .09em;
+text-transform: uppercase;
+color: var(--ink-faint);
+margin-bottom: .5rem;
+}
+nav#TOC ul { list-style: none; padding-left: 1rem; margin: .25rem 0; }
+nav#TOC > ul { padding-left: 0; }
+nav#TOC li { margin: .18rem 0; }
+nav#TOC a { color: var(--ink-soft); text-decoration: none; }
+nav#TOC a:hover { color: var(--accent); text-decoration: underline; }
+
+table {
+border-collapse: collapse;
+width: 100%;
+margin: 1.4rem 0 1.8rem;
+font-size: .91rem;
+font-variant-numeric: tabular-nums;
+}
+caption {
+caption-side: top;
+text-align: left;
+font-size: .85rem;
+color: var(--ink-faint);
+padding-bottom: .45rem;
+}
+thead th {
+background: var(--accent-bg);
+color: var(--ink);
+font-weight: 640;
+text-align: left;
+border-bottom: 2px solid var(--accent);
+padding: .55rem .7rem;
+vertical-align: bottom;
+}
+tbody td, tbody th {
+padding: .48rem .7rem;
+border-bottom: 1px solid var(--rule-soft);
+vertical-align: top;
+}
+tbody tr:nth-child(even) { background: #fbfcfd; }
+tbody tr:hover { background: var(--accent-bg); }
+tbody td:first-child { font-weight: 500; }
+
+td[style*="text-align: right"], th[style*="text-align: right"] {
+font-variant-numeric: tabular-nums;
+}
+
+code {
+font-family: var(--mono);
+font-size: .875em;
+background: var(--tint);
+border: 1px solid var(--rule);
+border-radius: 3px;
+padding: .08em .35em;
+color: #2b3a4a;
+}
+pre {
+background: var(--tint);
+border: 1px solid var(--rule);
+border-left: 4px solid var(--accent);
+border-radius: 5px;
+padding: .9rem 1.1rem;
+overflow-x: auto;
+font-size: .86rem;
+line-height: 1.5;
+}
+pre code { background: none; border: none; padding: 0; font-size: 1em; }
+
+blockquote {
+margin: 1.4rem 0;
+padding: .85rem 1.2rem;
+background: var(--warn-bg);
+border-left: 4px solid #c9a227;
+border-radius: 0 5px 5px 0;
+color: var(--ink);
+}
+blockquote p:first-child { margin-top: 0; }
+blockquote p:last-child { margin-bottom: 0; }
+
+svg { display: block; max-width: 100%; height: auto; margin: 1.6rem auto; }
+figure { margin: 1.8rem 0; }
+figcaption { font-size: .86rem; color: var(--ink-faint); text-align: center; }
+
+a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:hover { color: #1f4160; }
+hr { border: none; border-top: 1px solid var(--rule); margin: 2.6rem 0; }
+strong { font-weight: 640; }
+ul, ol { padding-left: 1.4rem; }
+li { margin: .3rem 0; }
+li > ul, li > ol { margin: .25rem 0; }
+
+body > p > em:only-child { color: var(--ink-faint); font-size: .9rem; }
+
+math { font-size: 1.02em; }
+
+@media print {
+body { max-width: none; padding: 0; font-size: 11pt; }
+nav#TOC { break-after: page; }
+h1:not(.title), h2 { break-after: avoid; }
+table, pre, svg, blockquote { break-inside: avoid; }
+tbody tr:hover { background: none; }
+a { color: var(--ink); text-decoration: none; }
+}
+@media (max-width: 680px) {
+body { padding: 1.4rem 1rem 4rem; font-size: 15px; }
+table { font-size: .84rem; }
+h1.title { font-size: 1.55rem; }
+}
+</style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">eiod - changelog</h1>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#eiod-0.1.0" id="toc-eiod-0.1.0">eiod 0.1.0</a>
+<ul>
+<li><a href="#known-limitations" id="toc-known-limitations">Known
+limitations</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="eiod-0.1.0">eiod 0.1.0</h1>
+<p>First public release. 2026-10-14.</p>
+<p>Nine commands implementing Tables 3, 4a–4g, 5a and 5b of the Intake
+Environmental Impacts of Diets methods paper (January 2026), as Stata
+do-files.</p>
+<ul>
+<li><code>eiod_demogroup</code> builds the eight age × sex groups every
+cut-off is scaled by.</li>
+<li><code>eiod_absolute</code> (Table 3) and <code>eiod_relative</code>
+(Tables 4a–4g) for all seven indicators, with <code>threshvar()</code>
+and <code>cutvar()</code> to return the cut-off each respondent was
+judged against.</li>
+<li><code>eiod_hesd</code> (Table 5a) and <code>eiod_hdlei</code> (Table
+5b), each returning the two criteria as separate sub-indicators as well
+as the combined measure.</li>
+<li><code>eiod_absolute_all</code> and <code>eiod_relative_all</code>
+apply a metric across several indicators in one call, with one option
+per indicator holding <strong>your</strong> variable name. Supply any
+subset.</li>
+<li><code>eiod_check_impact</code> and an automatic pre-check inside the
+metric commands catch the storage and scale faults that destroy impact
+data silently.</li>
+<li>616 cut-offs ship as <code>functions/dta/eiod_cutoffs.dta</code>,
+built from the same CSV the companion R package <code>reiod</code>
+reads, so the two cannot drift at the data layer.</li>
+</ul>
+<h2 id="known-limitations">Known limitations</h2>
+<ul>
+<li><strong>The eutrophication unit reading is an inference.</strong>
+The paper states no unit for Tables 4a–4g; the package reads Table 4f as
+grams and Table 3 as kilograms. See
+<code>functions/readme/01_eiod_build_cutoffs.md</code> §2 for the
+evidence. The question is with Intake.</li>
+<li><strong>No automated test run in CI.</strong> Stata is licensed
+software and GitHub’s runners do not have it, so
+<code>validate/eiod_validate.do</code> is run locally and its result
+recorded. The CI workflow checks structure only — see
+<code>.github/workflows/checks.yml</code>.</li>
+<li><strong><code>.do</code> files, not <code>.ado</code>.</strong> Load
+them with <code>eiod_load_functions.do</code> before your analysis. A
+conversion to <code>.ado</code> with <code>.sthlp</code> help files is
+planned; see the package plan.</li>
+</ul>
+</body>
+</html>

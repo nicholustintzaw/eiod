@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>eiod - Intake EIOD metrics for Stata</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+</style>
+  <style type="text/css">
+:root {
+--ink: #1d2430;
+--ink-soft: #4a5568;
+--ink-faint: #6b7684;
+--rule: #dde3ea;
+--rule-soft: #eef2f6;
+--paper: #ffffff;
+--tint: #f6f8fa;
+--accent: #2f5d8a;
+--accent-dk: #1f4160;
+--accent-bg: #eaf1f8;
+--good: #2d6e2d;
+--good-bg: #edf7ed;
+--warn: #8a5a00;
+--warn-bg: #fff8e8;
+--bad: #a32b2b;
+--bad-bg: #fdeeee;
+--mono: "Cascadia Mono", "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+--sans: "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+}
+html { -webkit-text-size-adjust: 100%; }
+body {
+font-family: var(--sans);
+font-size: 16px;
+line-height: 1.62;
+color: var(--ink);
+background: var(--paper);
+max-width: 980px;
+margin: 0 auto;
+padding: 2.5rem 1.6rem 6rem;
+hyphens: none;
+}
+
+header#title-block-header { margin-bottom: 2.2rem; }
+h1.title {
+font-size: 1.95rem;
+line-height: 1.25;
+font-weight: 650;
+letter-spacing: -0.012em;
+margin: 0 0 .9rem;
+padding-bottom: .9rem;
+border-bottom: 3px solid var(--accent);
+color: var(--ink);
+}
+p.subtitle { color: var(--ink-soft); font-size: 1.05rem; margin-top: -.4rem; }
+
+h1, h2, h3, h4 { font-weight: 640; letter-spacing: -0.008em; color: var(--ink); }
+h1:not(.title) {
+font-size: 1.6rem;
+margin: 3rem 0 1rem;
+padding-bottom: .4rem;
+border-bottom: 2px solid var(--rule);
+}
+h2 {
+font-size: 1.32rem;
+margin: 2.6rem 0 .9rem;
+padding-bottom: .35rem;
+border-bottom: 1px solid var(--rule);
+}
+h3 { font-size: 1.1rem; margin: 2rem 0 .6rem; color: var(--accent); }
+h4 { font-size: 1rem; margin: 1.5rem 0 .5rem; color: var(--ink-soft); }
+
+nav#TOC {
+background: var(--tint);
+border: 1px solid var(--rule);
+border-left: 4px solid var(--accent);
+border-radius: 6px;
+padding: 1.1rem 1.4rem .9rem;
+margin: 0 0 2.6rem;
+font-size: .93rem;
+}
+nav#TOC::before {
+content: "Contents";
+display: block;
+font-weight: 650;
+font-size: .78rem;
+letter-spacing: .09em;
+text-transform: uppercase;
+color: var(--ink-faint);
+margin-bottom: .5rem;
+}
+nav#TOC ul { list-style: none; padding-left: 1rem; margin: .25rem 0; }
+nav#TOC > ul { padding-left: 0; }
+nav#TOC li { margin: .18rem 0; }
+nav#TOC a { color: var(--ink-soft); text-decoration: none; }
+nav#TOC a:hover { color: var(--accent); text-decoration: underline; }
+
+table {
+border-collapse: collapse;
+width: 100%;
+margin: 1.4rem 0 1.8rem;
+font-size: .91rem;
+font-variant-numeric: tabular-nums;
+}
+caption {
+caption-side: top;
+text-align: left;
+font-size: .85rem;
+color: var(--ink-faint);
+padding-bottom: .45rem;
+}
+thead th {
+background: var(--accent-bg);
+color: var(--ink);
+font-weight: 640;
+text-align: left;
+border-bottom: 2px solid var(--accent);
+padding: .55rem .7rem;
+vertical-align: bottom;
+}
+tbody td, tbody th {
+padding: .48rem .7rem;
+border-bottom: 1px solid var(--rule-soft);
+vertical-align: top;
+}
+tbody tr:nth-child(even) { background: #fbfcfd; }
+tbody tr:hover { background: var(--accent-bg); }
+tbody td:first-child { font-weight: 500; }
+
+td[style*="text-align: right"], th[style*="text-align: right"] {
+font-variant-numeric: tabular-nums;
+}
+
+code {
+font-family: var(--mono);
+font-size: .875em;
+background: var(--tint);
+border: 1px solid var(--rule);
+border-radius: 3px;
+padding: .08em .35em;
+color: #2b3a4a;
+}
+pre {
+background: var(--tint);
+border: 1px solid var(--rule);
+border-left: 4px solid var(--accent);
+border-radius: 5px;
+padding: .9rem 1.1rem;
+overflow-x: auto;
+font-size: .86rem;
+line-height: 1.5;
+}
+pre code { background: none; border: none; padding: 0; font-size: 1em; }
+
+blockquote {
+margin: 1.4rem 0;
+padding: .85rem 1.2rem;
+background: var(--warn-bg);
+border-left: 4px solid #c9a227;
+border-radius: 0 5px 5px 0;
+color: var(--ink);
+}
+blockquote p:first-child { margin-top: 0; }
+blockquote p:last-child { margin-bottom: 0; }
+
+svg { display: block; max-width: 100%; height: auto; margin: 1.6rem auto; }
+figure { margin: 1.8rem 0; }
+figcaption { font-size: .86rem; color: var(--ink-faint); text-align: center; }
+
+a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:hover { color: #1f4160; }
+hr { border: none; border-top: 1px solid var(--rule); margin: 2.6rem 0; }
+strong { font-weight: 640; }
+ul, ol { padding-left: 1.4rem; }
+li { margin: .3rem 0; }
+li > ul, li > ol { margin: .25rem 0; }
+
+body > p > em:only-child { color: var(--ink-faint); font-size: .9rem; }
+
+math { font-size: 1.02em; }
+
+@media print {
+body { max-width: none; padding: 0; font-size: 11pt; }
+nav#TOC { break-after: page; }
+h1:not(.title), h2 { break-after: avoid; }
+table, pre, svg, blockquote { break-inside: avoid; }
+tbody tr:hover { background: none; }
+a { color: var(--ink); text-decoration: none; }
+}
+@media (max-width: 680px) {
+body { padding: 1.4rem 1rem 4rem; font-size: 15px; }
+table { font-size: .84rem; }
+h1.title { font-size: 1.55rem; }
+}
+</style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">eiod - Intake EIOD metrics for Stata</h1>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#eiod" id="toc-eiod">eiod</a>
+<ul>
+<li><a href="#if-you-are-reviewing-this" id="toc-if-you-are-reviewing-this">If you are reviewing this</a></li>
+<li><a href="#if-you-are-using-it" id="toc-if-you-are-using-it">If you
+are using it</a>
+<ul>
+<li><a href="#the-documentation-in-reading-order" id="toc-the-documentation-in-reading-order">The documentation, in
+reading order</a></li>
+</ul></li>
+<li><a href="#three-things-to-know-before-reporting-any-result" id="toc-three-things-to-know-before-reporting-any-result">Three things
+to know before reporting any result</a></li>
+<li><a href="#what-this-is-not" id="toc-what-this-is-not">What this is
+not</a></li>
+<li><a href="#acknowledgements" id="toc-acknowledgements">Acknowledgements</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="eiod">eiod</h1>
+<p><strong>Intake dietary environmental impact metrics, as Stata
+commands.</strong></p>
+<p>Tables 3, 4a–4g, 5a and 5b of <em>Methods for Assessing Healthy,
+Environmentally Sustainable Diets Globally</em> (Intake, 2026),
+implemented as plain do-files.</p>
+<p><a href="https://github.com/nicholustintzaw/eiod">Repository on
+GitHub</a> · <a href="https://github.com/nicholustintzaw/reiod">R
+companion: reiod</a></p>
+<hr />
+<h2 id="if-you-are-reviewing-this">If you are reviewing this</h2>
+<p>Start here.</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><strong><a href="01_eiod_build_cutoffs.html">The reference
+dataset</a></strong></td>
+<td>all 616 cut-offs: how they were transcribed, how exact they are, and
+<strong>the eutrophication unit question</strong> — the one open point
+that affects the numbers</td>
+</tr>
+<tr class="even">
+<td><code>eiod_cutoffs_wide_check.csv</code></td>
+<td>in the repository under <code>functions/dta/</code> — the cut-offs
+laid out group-by-group for direct comparison against the printed
+tables. <strong>The most reviewable artefact here</strong></td>
+</tr>
+<tr class="odd">
+<td><a href="https://github.com/nicholustintzaw/eiod/issues">Issues</a></td>
+<td>where open points are raised and answered. There is a template for a
+methods or cut-off query</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="if-you-are-using-it">If you are using it</h2>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><strong><a href="readme.html">README</a></strong></td>
+<td>installation, the nine commands, worked examples, where files
+live</td>
+</tr>
+<tr class="even">
+<td><strong><a href="news.html">Changelog</a></strong></td>
+<td>what changed, and whether it affects your results</td>
+</tr>
+</tbody>
+</table>
+<h3 id="the-documentation-in-reading-order">The documentation, in
+reading order</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><a href="01_eiod_build_cutoffs.html">01 — the reference
+dataset</a></td>
+<td>the 616 cut-offs, the precision guarantees, and the two-unit
+eutrophication question</td>
+</tr>
+<tr class="even">
+<td><a href="02_eiod_demogroup.html">02 —
+<code>eiod_demogroup</code></a></td>
+<td>the eight age × sex groups every cut-off is scaled by</td>
+</tr>
+<tr class="odd">
+<td><a href="03_eiod_absolute.html">03 —
+<code>eiod_absolute</code></a></td>
+<td>Table 3, and the one unit conversion in the package</td>
+</tr>
+<tr class="even">
+<td><a href="04_eiod_relative.html">04 —
+<code>eiod_relative</code></a></td>
+<td>Tables 4a–4g, <strong>the band rule step by step</strong> — the one
+to read if you read only one</td>
+</tr>
+<tr class="odd">
+<td><a href="05_eiod_composites.html">05 — the composites</a></td>
+<td>Tables 5a and 5b, the sub-indicators, and why HDLEI is nested inside
+HESD</td>
+</tr>
+<tr class="even">
+<td><a href="06_eiod_infrastructure.html">06 — infrastructure</a></td>
+<td>path resolution, the loader, the batch wrappers, the input QC</td>
+</tr>
+</tbody>
+</table>
+<p>Each page gives the original table it implements and a line-by-line
+account of what the code does, so the calculation can be checked without
+reading Stata.</p>
+<hr />
+<h2 id="three-things-to-know-before-reporting-any-result">Three things
+to know before reporting any result</h2>
+<ol type="1">
+<li><strong>HESD and HDLEI are nested, not independent.</strong> The
+HDLEI environmental cut-off is uniformly 1.52× stricter, so every HDLEI
+diet is also a HESD diet. One cell of the 2×2 is structurally
+empty.</li>
+<li><strong>A low relative band is not evidence of
+sustainability.</strong> For greenhouse gases even band 1 exceeds the
+planetary boundary; for water even band 10 sits below it. The two metric
+families answer different questions.</li>
+<li><strong>Eutrophication is printed in two different units</strong> —
+kg in Table 3, grams in Table 4f. Supply your data in grams, as the EIOF
+database gives it to you. <strong>This reading is an inference and has
+not been confirmed by Intake</strong> — see <a href="01_eiod_build_cutoffs.html">the reference dataset</a>, section
+2.</li>
+</ol>
+<hr />
+<h2 id="what-this-is-not">What this is not</h2>
+<p><strong>It does not contain the EIOF database.</strong> It ships the
+published metric <em>cut-offs</em> and applies them to impact values you
+have already derived. Matching food items to impact factors, applying
+the edible-portion, processing and cooking-yield adjustments, and
+summing to the respondent-day is upstream work this package starts
+after.</p>
+<p>It also does not calculate the Global Diet Quality Score — the
+composite metrics take a GDQS value as an input.</p>
+<hr />
+<h2 id="acknowledgements">Acknowledgements</h2>
+<p>The metric definitions and all 616 cut-off values are
+<strong>Intake’s</strong>, from <em>Methods for Assessing Healthy,
+Environmentally Sustainable Diets Globally</em> (Intake — Center for
+Dietary Assessment, 2026). This package implements them; it did not
+derive them.</p>
+<p>The code, documentation and verification suite were written with the
+assistance of <strong>Claude (Anthropic)</strong>, used as a coding and
+writing assistant throughout development. All methodological decisions,
+the reading of the methods paper, the verification of every result, and
+responsibility for the contents are the author’s.</p>
+<hr />
+<p><em>MIT licensed code. The cut-off values are Intake’s; see the
+repository <code>LICENSE</code>.</em></p>
+</body>
+</html>

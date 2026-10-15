@@ -1,0 +1,35 @@
+# Normalise text to LF in the repository.
+#
+# Two things depend on this:
+#   1. build_docs.sh runs on an Ubuntu CI runner. With CRLF endings the shebang
+#      becomes "/usr/bin/env bash\r" and the job fails with a bad-interpreter
+#      error that is famously confusing to diagnose.
+#   2. CI regenerates docs/ and fails if the result differs from what is
+#      committed. If HTML were committed with CRLF from Windows and regenerated
+#      with LF on Linux, every file would differ and the check would be useless.
+#
+# Working copies still get native endings on checkout; this governs what is
+# stored.
+* text=auto eol=lf
+
+# Shell scripts must be LF even on a Windows checkout - Git Bash runs them.
+*.sh text eol=lf
+
+# Stata reads either, but keep them consistent with everything else.
+*.do   text eol=lf
+*.md   text eol=lf
+*.csv  text eol=lf
+*.yml  text eol=lf
+*.cff  text eol=lf
+*.css  text eol=lf
+*.html text eol=lf
+
+# Binary - never touch these.
+*.dta  binary
+*.xlsx binary
+*.png  binary
+*.pdf  binary
+
+# Keep generated docs out of diffs and language statistics: they are build
+# output, and a one-line source edit can rewrite a whole embedded-resource file.
+docs/*.html linguist-generated=true -diff

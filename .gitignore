@@ -1,0 +1,13 @@
+# Stata run logs - regenerated on every run, and machine-specific
+*.log
+*.smcl
+
+# Stata leftovers
+*.stswp
+*.stsem
+.stata_kernel_cache/
+
+# OS noise
+Thumbs.db
+.DS_Store
+desktop.ini

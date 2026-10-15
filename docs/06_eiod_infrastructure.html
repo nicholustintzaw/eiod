@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>06 - helper, loader, batch wrappers and input QC</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+  <style type="text/css">
+:root {
+--ink: #1d2430;
+--ink-soft: #4a5568;
+--ink-faint: #6b7684;
+--rule: #dde3ea;
+--rule-soft: #eef2f6;
+--paper: #ffffff;
+--tint: #f6f8fa;
+--accent: #2f5d8a;
+--accent-dk: #1f4160;
+--accent-bg: #eaf1f8;
+--good: #2d6e2d;
+--good-bg: #edf7ed;
+--warn: #8a5a00;
+--warn-bg: #fff8e8;
+--bad: #a32b2b;
+--bad-bg: #fdeeee;
+--mono: "Cascadia Mono", "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+--sans: "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+}
+html { -webkit-text-size-adjust: 100%; }
+body {
+font-family: var(--sans);
+font-size: 16px;
+line-height: 1.62;
+color: var(--ink);
+background: var(--paper);
+max-width: 980px;
+margin: 0 auto;
+padding: 2.5rem 1.6rem 6rem;
+hyphens: none;
+}
+
+header#title-block-header { margin-bottom: 2.2rem; }
+h1.title {
+font-size: 1.95rem;
+line-height: 1.25;
+font-weight: 650;
+letter-spacing: -0.012em;
+margin: 0 0 .9rem;
+padding-bottom: .9rem;
+border-bottom: 3px solid var(--accent);
+color: var(--ink);
+}
+p.subtitle { color: var(--ink-soft); font-size: 1.05rem; margin-top: -.4rem; }
+
+h1, h2, h3, h4 { font-weight: 640; letter-spacing: -0.008em; color: var(--ink); }
+h1:not(.title) {
+font-size: 1.6rem;
+margin: 3rem 0 1rem;
+padding-bottom: .4rem;
+border-bottom: 2px solid var(--rule);
+}
+h2 {
+font-size: 1.32rem;
+margin: 2.6rem 0 .9rem;
+padding-bottom: .35rem;
+border-bottom: 1px solid var(--rule);
+}
+h3 { font-size: 1.1rem; margin: 2rem 0 .6rem; color: var(--accent); }
+h4 { font-size: 1rem; margin: 1.5rem 0 .5rem; color: var(--ink-soft); }
+
+nav#TOC {
+background: var(--tint);
+border: 1px solid var(--rule);
+border-left: 4px solid var(--accent);
+border-radius: 6px;
+padding: 1.1rem 1.4rem .9rem;
+margin: 0 0 2.6rem;
+font-size: .93rem;
+}
+nav#TOC::before {
+content: "Contents";
+display: block;
+font-weight: 650;
+font-size: .78rem;
+letter-spacing: .09em;
+text-transform: uppercase;
+color: var(--ink-faint);
+margin-bottom: .5rem;
+}
+nav#TOC ul { list-style: none; padding-left: 1rem; margin: .25rem 0; }
+nav#TOC > ul { padding-left: 0; }
+nav#TOC li { margin: .18rem 0; }
+nav#TOC a { color: var(--ink-soft); text-decoration: none; }
+nav#TOC a:hover { color: var(--accent); text-decoration: underline; }
+
+table {
+border-collapse: collapse;
+width: 100%;
+margin: 1.4rem 0 1.8rem;
+font-size: .91rem;
+font-variant-numeric: tabular-nums;
+}
+caption {
+caption-side: top;
+text-align: left;
+font-size: .85rem;
+color: var(--ink-faint);
+padding-bottom: .45rem;
+}
+thead th {
+background: var(--accent-bg);
+color: var(--ink);
+font-weight: 640;
+text-align: left;
+border-bottom: 2px solid var(--accent);
+padding: .55rem .7rem;
+vertical-align: bottom;
+}
+tbody td, tbody th {
+padding: .48rem .7rem;
+border-bottom: 1px solid var(--rule-soft);
+vertical-align: top;
+}
+tbody tr:nth-child(even) { background: #fbfcfd; }
+tbody tr:hover { background: var(--accent-bg); }
+tbody td:first-child { font-weight: 500; }
+
+td[style*="text-align: right"], th[style*="text-align: right"] {
+font-variant-numeric: tabular-nums;
+}
+
+code {
+font-family: var(--mono);
+font-size: .875em;
+background: var(--tint);
+border: 1px solid var(--rule);
+border-radius: 3px;
+padding: .08em .35em;
+color: #2b3a4a;
+}
+pre {
+background: var(--tint);
+border: 1px solid var(--rule);
+border-left: 4px solid var(--accent);
+border-radius: 5px;
+padding: .9rem 1.1rem;
+overflow-x: auto;
+font-size: .86rem;
+line-height: 1.5;
+}
+pre code { background: none; border: none; padding: 0; font-size: 1em; }
+
+blockquote {
+margin: 1.4rem 0;
+padding: .85rem 1.2rem;
+background: var(--warn-bg);
+border-left: 4px solid #c9a227;
+border-radius: 0 5px 5px 0;
+color: var(--ink);
+}
+blockquote p:first-child { margin-top: 0; }
+blockquote p:last-child { margin-bottom: 0; }
+
+svg { display: block; max-width: 100%; height: auto; margin: 1.6rem auto; }
+figure { margin: 1.8rem 0; }
+figcaption { font-size: .86rem; color: var(--ink-faint); text-align: center; }
+
+a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:hover { color: #1f4160; }
+hr { border: none; border-top: 1px solid var(--rule); margin: 2.6rem 0; }
+strong { font-weight: 640; }
+ul, ol { padding-left: 1.4rem; }
+li { margin: .3rem 0; }
+li > ul, li > ol { margin: .25rem 0; }
+
+body > p > em:only-child { color: var(--ink-faint); font-size: .9rem; }
+
+math { font-size: 1.02em; }
+
+@media print {
+body { max-width: none; padding: 0; font-size: 11pt; }
+nav#TOC { break-after: page; }
+h1:not(.title), h2 { break-after: avoid; }
+table, pre, svg, blockquote { break-inside: avoid; }
+tbody tr:hover { background: none; }
+a { color: var(--ink); text-decoration: none; }
+}
+@media (max-width: 680px) {
+body { padding: 1.4rem 1rem 4rem; font-size: 15px; }
+table { font-size: .84rem; }
+h1.title { font-size: 1.55rem; }
+}
+</style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">06 - helper, loader, batch wrappers and input QC</h1>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#eiod_fn_00_helper.do-eiod_fn_06_batch.do-eiod_fn_07_check.do-infrastructure" id="toc-eiod_fn_00_helper.do-eiod_fn_06_batch.do-eiod_fn_07_check.do-infrastructure"><code>eiod_fn_00_helper.do</code>,
+<code>eiod_fn_06_batch.do</code>, <code>eiod_fn_07_check.do</code> —
+infrastructure</a></li>
+<li><a href="#eiod_fn_00_helper.do-locating-the-cut-off-dataset" id="toc-eiod_fn_00_helper.do-locating-the-cut-off-dataset"><code>eiod_fn_00_helper.do</code>
+— locating the cut-off dataset</a>
+<ul>
+<li><a href="#search-order-first-hit-wins" id="toc-search-order-first-hit-wins">Search order — first hit
+wins</a></li>
+<li><a href="#two-parsing-traps-this-file-handles" id="toc-two-parsing-traps-this-file-handles">Two parsing traps this file
+handles</a></li>
+</ul></li>
+<li><a href="#eiod_fn_06_batch.do-name-your-own-variables" id="toc-eiod_fn_06_batch.do-name-your-own-variables"><code>eiod_fn_06_batch.do</code>
+— name your own variables</a>
+<ul>
+<li><a href="#the-problem-these-solve" id="toc-the-problem-these-solve">The problem these solve</a></li>
+<li><a href="#the-fix-one-option-per-indicator-holding-your-variable" id="toc-the-fix-one-option-per-indicator-holding-your-variable">The fix:
+one option per indicator, holding your variable</a></li>
+<li><a href="#output-names-come-from-the-indicator-not-from-your-variable" id="toc-output-names-come-from-the-indicator-not-from-your-variable">Output
+names come from the indicator, not from your variable</a></li>
+<li><a href="#no-new-logic" id="toc-no-new-logic">No new logic</a></li>
+</ul></li>
+<li><a href="#eiod_fn_07_check.do-input-qc" id="toc-eiod_fn_07_check.do-input-qc"><code>eiod_fn_07_check.do</code> —
+input QC</a>
+<ul>
+<li><a href="#why-and-what-was-actually-measured" id="toc-why-and-what-was-actually-measured">Why, and what was actually
+measured</a></li>
+<li><a href="#the-grading" id="toc-the-grading">The grading</a></li>
+<li><a href="#standalone-use" id="toc-standalone-use">Standalone
+use</a></li>
+<li><a href="#what-it-cannot-check" id="toc-what-it-cannot-check">What
+it cannot check</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="eiod_fn_00_helper.do-eiod_fn_06_batch.do-eiod_fn_07_check.do-infrastructure"><code>eiod_fn_00_helper.do</code>,
+<code>eiod_fn_06_batch.do</code>, <code>eiod_fn_07_check.do</code> —
+infrastructure</h1>
+<p>Three files that compute no metric. They decide <strong>where the
+cut-offs come from</strong>, <strong>how you name your
+variables</strong>, and <strong>whether your inputs are fit to
+use</strong>.</p>
+<hr />
+<h1 id="eiod_fn_00_helper.do-locating-the-cut-off-dataset"><code>eiod_fn_00_helper.do</code>
+— locating the cut-off dataset</h1>
+<p><strong>Defines</strong> <code>_eiod_cutfile</code>,
+<code>_eiod_try</code> (both internal; the underscore means do not call
+them in an analysis)</p>
+<p>Every metric command resolves the cut-off file through this one
+program, so the search rule exists in exactly one place.</p>
+<h2 id="search-order-first-hit-wins">Search order — first hit wins</h2>
+<table>
+<colgroup>
+<col style="width: 40%" />
+<col style="width: 30%" />
+<col style="width: 30%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">#</th>
+<th>Source</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td>the <code>cutoffs()</code> option</td>
+<td>per-call override. If given and unresolvable →
+<strong>error</strong>, never a silent fallback</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td><code>$EIOD_REF</code></td>
+<td><strong>the one to set</strong></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td><code>$EIOD_CUTOFFS</code></td>
+<td>accepted alias, so older scripts keep working</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td><code>$EIOD_HOME</code></td>
+<td>tries <code>$EIOD_HOME/eiod_cutoffs.dta</code> then
+<code>$EIOD_HOME/outputs/eiod_cutoffs.dta</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td>current working directory</td>
+<td><code>./eiod_cutoffs.dta</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6</td>
+<td>the adopath</td>
+<td>via <code>findfile</code></td>
+</tr>
+</tbody>
+</table>
+<p>Any of 1–5 may be given as <strong>a file or a folder</strong>. A
+path ending <code>.dta</code> is taken as a file; anything else is taken
+as a folder and <code>/eiod_cutoffs.dta</code> is appended.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">global</span> EIOD_REF <span class="st">&quot;D:/shared/eiof&quot;</span>                    <span class="co">// folder</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">global</span> EIOD_REF <span class="st">&quot;D:/shared/eiof/eiod_cutoffs.dta&quot;</span>   <span class="co">// file — same result</span></span></code></pre></div>
+<p>The resolved path and the route taken are returned in
+<code>s(path)</code> and <code>s(via)</code>, which is what the loader
+prints.</p>
+<h2 id="two-parsing-traps-this-file-handles">Two parsing traps this file
+handles</h2>
+<p><strong><code>syntax</code> with <code>(string)</code> keeps the
+quotes.</strong> An option typed <code>cutoffs(&quot;refdata&quot;)</code> arrives
+in the called program as the <em>nine</em>-character string
+<code>&quot;refdata&quot;</code>, quotes included. A caller that then re-wraps it
+in a compound quote produces <code>`&quot;&quot;refdata&quot;&quot;&#39;</code>, and the
+backtick-apostrophe pair expands as an undefined macro —
+<strong>silently empty</strong>. The helper therefore reads its argument
+with</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">local</span> path : copy <span class="kw">local</span> 0</span></code></pre></div>
+<p>which copies the contents verbatim without expansion, then strips
+quote characters and one enclosing compound-quote pair. A file path
+never contains a double quote, so nothing legitimate is lost.
+Apostrophes elsewhere are left alone — folder names legitimately contain
+them.</p>
+<p><strong>An empty forwarded option is the two-character string
+<code>&quot;&quot;</code>, not nothing.</strong> Stripping quote characters makes
+that case read correctly as “not supplied” rather than as a file named
+<code>&quot;&quot;</code>.</p>
+<hr />
+<h1 id="eiod_fn_06_batch.do-name-your-own-variables"><code>eiod_fn_06_batch.do</code>
+— name your own variables</h1>
+<p><strong>Defines</strong> <code>eiod_absolute_all</code>,
+<code>eiod_relative_all</code></p>
+<h2 id="the-problem-these-solve">The problem these solve</h2>
+<p><code>eiod_absolute</code> takes one indicator and one
+<code>value()</code> variable. Running seven means seven near-identical
+calls, and the obvious shortcut is</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">foreach</span> i <span class="kw">in</span> landtotal ghg biodiv { eiod_absolute <span class="ot">`i&#39;</span>, <span class="ot">value</span>(<span class="ot">`i&#39;</span>) ... }</span></code></pre></div>
+<p>which works <strong>only if your variables happen to be
+named</strong> <code>landtotal</code>, <code>ghg</code>,
+<code>biodiv</code>. They will not be. An earlier version of the demo
+did exactly this, which made it look as though the package required
+those names. It never did — but the pattern it taught did.</p>
+<h2 id="the-fix-one-option-per-indicator-holding-your-variable">The fix:
+one option per indicator, holding your variable</h2>
+<div class="sourceCode" id="cb4"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>eiod_absolute_all , <span class="fu">group</span>(dgroup)   <span class="co">///</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    landtotal(land_ado)             <span class="co">///</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    ghg(ghg_ado)                    <span class="co">///</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    biodiv(biodiv_ado)</span></code></pre></div>
+<p>Supply as few or as many as you hold. Indicators you do not name are
+simply not computed — no placeholder variables, no warnings, no need to
+fabricate a column.</p>
+<p>The seven option names must be typed <strong>in full</strong>:
+<code>landtotal</code>, <code>landarable</code> and
+<code>landpasture</code> share a stem, so abbreviating would be
+ambiguous and Stata refuses it.</p>
+<h2 id="output-names-come-from-the-indicator-not-from-your-variable">Output
+names come from the indicator, not from your variable</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Command</th>
+<th>Creates</th>
+<th>Default prefix</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>eiod_absolute_all</code></td>
+<td><code>abs_landtotal</code>, <code>thr_landtotal</code>, …</td>
+<td><code>prefix(abs_)</code>, <code>threshprefix(thr_)</code></td>
+</tr>
+<tr class="even">
+<td><code>eiod_relative_all</code></td>
+<td><code>rel_landtotal</code>, <code>mid_landtotal</code>,
+<code>rel_landtotal_lt30</code></td>
+<td><code>prefix(rel_)</code>, <code>midprefix(mid_)</code></td>
+</tr>
+</tbody>
+</table>
+<p>So <code>biodiv(biodiv_ado)</code> produces <code>abs_biodiv</code>
+whatever the input was called. That keeps results comparable across
+datasets whose inputs are named differently. Set <code>prefix()</code>
+if it clashes.</p>
+<h2 id="no-new-logic">No new logic</h2>
+<p>Both wrappers do nothing but loop and call the single-indicator
+command. Every threshold comparison, band assignment, missing-value rule
+and label still happens in <code>eiod_absolute</code> /
+<code>eiod_relative</code> exactly once. The demo asserts the
+equality:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>eiod_absolute_all, <span class="fu">group</span>(dgroup) <span class="kw">prefix</span>(sub_) ghg(ghg_ado)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>eiod_absolute ghg, <span class="ot">value</span>(ghg_ado) <span class="fu">group</span>(dgroup) <span class="kw">generate</span>(one_ghg)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">assert</span> sub_ghg == one_ghg</span></code></pre></div>
+<p><strong>Returns</strong> <code>r(n_ind)</code>,
+<code>r(indlist)</code>, <code>r(varlist)</code>.</p>
+<hr />
+<h1 id="eiod_fn_07_check.do-input-qc"><code>eiod_fn_07_check.do</code> —
+input QC</h1>
+<p><strong>Defines</strong> <code>eiod_check_impact</code> (standalone
+report), <code>_eiod_precheck</code> (internal; run automatically by
+<code>eiod_absolute</code> and <code>eiod_relative</code> before
+anything is computed)</p>
+<h2 id="why-and-what-was-actually-measured">Why, and what was actually
+measured</h2>
+<p>The indicators span 15 orders of magnitude — water around 600 litres,
+biodiversity around 8×10⁻¹³ PDF·year. A storage type that is harmless
+for one could be destructive for another, and Stata says nothing.</p>
+<p>The risk was <strong>measured</strong> on 200,000 simulated
+respondent-days against the real cut-offs, not assumed:</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Condition</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>float</code> storage → absolute classification flips</td>
+<td><strong>0 of 200,000</strong> (biodiv, ghg, water, landtotal)</td>
+</tr>
+<tr class="even">
+<td><code>float</code> storage → relative band changes</td>
+<td><strong>1 of 200,000</strong> (water)</td>
+</tr>
+<tr class="odd">
+<td>largest relative error from float-storing a cut-off</td>
+<td>5.5 × 10⁻⁸</td>
+</tr>
+<tr class="even">
+<td>cut-offs that underflow in float</td>
+<td><strong>0</strong></td>
+</tr>
+<tr class="odd">
+<td><strong>float underflow</strong> at ~10⁻⁴⁰</td>
+<td><strong>200,000 of 200,000 flushed to exactly zero</strong></td>
+</tr>
+<tr class="even">
+<td><strong>integer</strong> storage of ghg</td>
+<td><strong>200,000 changed; mean 3.836 → 3.336, a 13%
+bias</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>The headline is not the expected one.</strong> Plain
+<code>float</code> at EIOF magnitudes is very nearly harmless —
+biodiversity at 10⁻¹³ sits comfortably inside float range, whose
+smallest normal value is about 1.2×10⁻³⁸. What is destructive is:</p>
+<ul>
+<li><strong>integer storage</strong>, which truncates every value toward
+zero and biases the mean by double digits, silently;</li>
+<li><strong>underflow</strong>, when the variable is <code>float</code>
+<em>and</em> the values are far below EIOF scale — which happens as soon
+as biodiversity is expressed per gram rather than per kilogram, or is
+left at ingredient level before summing to the day.</li>
+</ul>
+<h2 id="the-grading">The grading</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Check</th>
+<th>Condition</th>
+<th>Grade</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>storage</td>
+<td><code>byte</code> / <code>int</code> / <code>long</code></td>
+<td><strong>error</strong></td>
+</tr>
+<tr class="even">
+<td>storage</td>
+<td><code>float</code>, all values exactly zero</td>
+<td><strong>error</strong></td>
+</tr>
+<tr class="odd">
+<td>storage</td>
+<td><code>float</code>, smallest non-zero &lt; 10⁻³⁷</td>
+<td><strong>error</strong></td>
+</tr>
+<tr class="even">
+<td>storage</td>
+<td><code>float</code> with some exact zeros</td>
+<td><strong>error</strong></td>
+</tr>
+<tr class="odd">
+<td>storage</td>
+<td><code>float</code>, otherwise</td>
+<td>note</td>
+</tr>
+<tr class="even">
+<td>storage</td>
+<td><code>double</code>, all values exactly zero</td>
+<td><strong>error</strong></td>
+</tr>
+<tr class="odd">
+<td>sign</td>
+<td>any negative value</td>
+<td><strong>error</strong></td>
+</tr>
+<tr class="even">
+<td>scale</td>
+<td>median &gt; 10⁴ × or &lt; 10⁻⁴ × the published cut-off median</td>
+<td>warning (usually a unit mismatch)</td>
+</tr>
+</tbody>
+</table>
+<p>An “error” prints and lets the command continue by default, so an
+existing script does not break; add <code>strict</code> to make it stop
+with <code>r(459)</code>. <code>nocheck</code> skips the check
+entirely.</p>
+<p><strong>The all-zero case needs its own test.</strong> The obvious
+check — look at the smallest non-zero value — sees nothing once
+<em>every</em> value has already been flushed to zero. That gap was
+found by a test, not by inspection, and is now covered.</p>
+<h2 id="standalone-use">Standalone use</h2>
+<div class="sourceCode" id="cb6"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>eiod_check_impact land_ado ghg_ado biodiv_ado</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>eiod_check_impact biodiv_ado , indicator(biodiv) <span class="ot">strict</span></span></code></pre></div>
+<p>Prints a type/range/zero-count table and then the graded
+findings.</p>
+<h2 id="what-it-cannot-check">What it cannot check</h2>
+<ul>
+<li>that the <strong>unit</strong> matches the EIOF database (m²·year,
+kg CO₂eq, kg PO₄eq, litres, PDF·year)</li>
+<li>that the value is a respondent-<strong>day</strong> total, already
+summed across every ingredient</li>
+</ul>
+<p>Neither is inferable from the numbers alone. The scale check catches
+gross unit errors; it cannot catch a factor of three.</p>
+<p><em>Last updated 2026-10-05.</em></p>
+</body>
+</html>

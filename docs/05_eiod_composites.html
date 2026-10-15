@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>05 - eiod_hesd and eiod_hdlei: Tables 5a and 5b</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+  <style type="text/css">
+:root {
+--ink: #1d2430;
+--ink-soft: #4a5568;
+--ink-faint: #6b7684;
+--rule: #dde3ea;
+--rule-soft: #eef2f6;
+--paper: #ffffff;
+--tint: #f6f8fa;
+--accent: #2f5d8a;
+--accent-dk: #1f4160;
+--accent-bg: #eaf1f8;
+--good: #2d6e2d;
+--good-bg: #edf7ed;
+--warn: #8a5a00;
+--warn-bg: #fff8e8;
+--bad: #a32b2b;
+--bad-bg: #fdeeee;
+--mono: "Cascadia Mono", "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+--sans: "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+}
+html { -webkit-text-size-adjust: 100%; }
+body {
+font-family: var(--sans);
+font-size: 16px;
+line-height: 1.62;
+color: var(--ink);
+background: var(--paper);
+max-width: 980px;
+margin: 0 auto;
+padding: 2.5rem 1.6rem 6rem;
+hyphens: none;
+}
+
+header#title-block-header { margin-bottom: 2.2rem; }
+h1.title {
+font-size: 1.95rem;
+line-height: 1.25;
+font-weight: 650;
+letter-spacing: -0.012em;
+margin: 0 0 .9rem;
+padding-bottom: .9rem;
+border-bottom: 3px solid var(--accent);
+color: var(--ink);
+}
+p.subtitle { color: var(--ink-soft); font-size: 1.05rem; margin-top: -.4rem; }
+
+h1, h2, h3, h4 { font-weight: 640; letter-spacing: -0.008em; color: var(--ink); }
+h1:not(.title) {
+font-size: 1.6rem;
+margin: 3rem 0 1rem;
+padding-bottom: .4rem;
+border-bottom: 2px solid var(--rule);
+}
+h2 {
+font-size: 1.32rem;
+margin: 2.6rem 0 .9rem;
+padding-bottom: .35rem;
+border-bottom: 1px solid var(--rule);
+}
+h3 { font-size: 1.1rem; margin: 2rem 0 .6rem; color: var(--accent); }
+h4 { font-size: 1rem; margin: 1.5rem 0 .5rem; color: var(--ink-soft); }
+
+nav#TOC {
+background: var(--tint);
+border: 1px solid var(--rule);
+border-left: 4px solid var(--accent);
+border-radius: 6px;
+padding: 1.1rem 1.4rem .9rem;
+margin: 0 0 2.6rem;
+font-size: .93rem;
+}
+nav#TOC::before {
+content: "Contents";
+display: block;
+font-weight: 650;
+font-size: .78rem;
+letter-spacing: .09em;
+text-transform: uppercase;
+color: var(--ink-faint);
+margin-bottom: .5rem;
+}
+nav#TOC ul { list-style: none; padding-left: 1rem; margin: .25rem 0; }
+nav#TOC > ul { padding-left: 0; }
+nav#TOC li { margin: .18rem 0; }
+nav#TOC a { color: var(--ink-soft); text-decoration: none; }
+nav#TOC a:hover { color: var(--accent); text-decoration: underline; }
+
+table {
+border-collapse: collapse;
+width: 100%;
+margin: 1.4rem 0 1.8rem;
+font-size: .91rem;
+font-variant-numeric: tabular-nums;
+}
+caption {
+caption-side: top;
+text-align: left;
+font-size: .85rem;
+color: var(--ink-faint);
+padding-bottom: .45rem;
+}
+thead th {
+background: var(--accent-bg);
+color: var(--ink);
+font-weight: 640;
+text-align: left;
+border-bottom: 2px solid var(--accent);
+padding: .55rem .7rem;
+vertical-align: bottom;
+}
+tbody td, tbody th {
+padding: .48rem .7rem;
+border-bottom: 1px solid var(--rule-soft);
+vertical-align: top;
+}
+tbody tr:nth-child(even) { background: #fbfcfd; }
+tbody tr:hover { background: var(--accent-bg); }
+tbody td:first-child { font-weight: 500; }
+
+td[style*="text-align: right"], th[style*="text-align: right"] {
+font-variant-numeric: tabular-nums;
+}
+
+code {
+font-family: var(--mono);
+font-size: .875em;
+background: var(--tint);
+border: 1px solid var(--rule);
+border-radius: 3px;
+padding: .08em .35em;
+color: #2b3a4a;
+}
+pre {
+background: var(--tint);
+border: 1px solid var(--rule);
+border-left: 4px solid var(--accent);
+border-radius: 5px;
+padding: .9rem 1.1rem;
+overflow-x: auto;
+font-size: .86rem;
+line-height: 1.5;
+}
+pre code { background: none; border: none; padding: 0; font-size: 1em; }
+
+blockquote {
+margin: 1.4rem 0;
+padding: .85rem 1.2rem;
+background: var(--warn-bg);
+border-left: 4px solid #c9a227;
+border-radius: 0 5px 5px 0;
+color: var(--ink);
+}
+blockquote p:first-child { margin-top: 0; }
+blockquote p:last-child { margin-bottom: 0; }
+
+svg { display: block; max-width: 100%; height: auto; margin: 1.6rem auto; }
+figure { margin: 1.8rem 0; }
+figcaption { font-size: .86rem; color: var(--ink-faint); text-align: center; }
+
+a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:hover { color: #1f4160; }
+hr { border: none; border-top: 1px solid var(--rule); margin: 2.6rem 0; }
+strong { font-weight: 640; }
+ul, ol { padding-left: 1.4rem; }
+li { margin: .3rem 0; }
+li > ul, li > ol { margin: .25rem 0; }
+
+body > p > em:only-child { color: var(--ink-faint); font-size: .9rem; }
+
+math { font-size: 1.02em; }
+
+@media print {
+body { max-width: none; padding: 0; font-size: 11pt; }
+nav#TOC { break-after: page; }
+h1:not(.title), h2 { break-after: avoid; }
+table, pre, svg, blockquote { break-inside: avoid; }
+tbody tr:hover { background: none; }
+a { color: var(--ink); text-decoration: none; }
+}
+@media (max-width: 680px) {
+body { padding: 1.4rem 1rem 4rem; font-size: 15px; }
+table { font-size: .84rem; }
+h1.title { font-size: 1.55rem; }
+}
+</style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">05 - eiod_hesd and eiod_hdlei: Tables 5a and 5b</h1>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#eiod_fn_04_hesd.do-and-eiod_fn_05_hdlei.do-tables-5a-and-5b" id="toc-eiod_fn_04_hesd.do-and-eiod_fn_05_hdlei.do-tables-5a-and-5b"><code>eiod_fn_04_hesd.do</code>
+and <code>eiod_fn_05_hdlei.do</code> — Tables 5a and 5b</a>
+<ul>
+<li><a href="#the-two-original-tables" id="toc-the-two-original-tables">1. The two original tables</a></li>
+<li><a href="#the-criteria" id="toc-the-criteria">2. The
+criteria</a></li>
+<li><a href="#the-decomposed-sub-indicators" id="toc-the-decomposed-sub-indicators">3. The decomposed
+sub-indicators</a></li>
+<li><a href="#no-duplicated-logic-the-environmental-criterion-is-delegated" id="toc-no-duplicated-logic-the-environmental-criterion-is-delegated">4.
+No duplicated logic — the environmental criterion is delegated</a></li>
+<li><a href="#the-two-composites-are-nested-do-not-present-them-as-a-22" id="toc-the-two-composites-are-nested-do-not-present-them-as-a-22">5.
+The two composites are NESTED — do not present them as a 2×2</a></li>
+<li><a href="#the-age-restriction-changes-every-denominator" id="toc-the-age-restriction-changes-every-denominator">6. The age
+restriction changes every denominator</a></li>
+<li><a href="#syntax" id="toc-syntax">7. Syntax</a></li>
+<li><a href="#related" id="toc-related">8. Related</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="eiod_fn_04_hesd.do-and-eiod_fn_05_hdlei.do-tables-5a-and-5b"><code>eiod_fn_04_hesd.do</code>
+and <code>eiod_fn_05_hdlei.do</code> — Tables 5a and 5b</h1>
+<p><strong>Defines</strong> <code>eiod_hesd</code> (Table 5a),
+<code>eiod_hdlei</code> (Table 5b) <strong>Source</strong>
+Intake-EIOD-Methods-Paper-Jan2026-Final.pdf, Tables 5a–5b (p. 20);
+method p. 4; Annex 1 Part II (p. 17) <strong>Verified by</strong>
+<code>eiod_validate.do</code> Parts B, G, H, J</p>
+<p>Documented together because they are the same construction with one
+criterion swapped — and because <strong>they are nested, not
+independent</strong>. See §5; it changes how they may be reported.</p>
+<hr />
+<h2 id="the-two-original-tables">1. The two original tables</h2>
+<p>Both cross a <strong>diet-quality</strong> criterion with an
+<strong>environmental</strong> criterion into four categories:</p>
+<table>
+<colgroup>
+<col style="width: 40%" />
+<col style="width: 30%" />
+<col style="width: 30%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">Category</th>
+<th>Table 5a (HESD)</th>
+<th>Table 5b (HDLEI)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td>Healthy <strong>and</strong> environmentally sustainable</td>
+<td>Healthy <strong>and</strong> low environmental impact</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td>Not healthy but environmentally sustainable</td>
+<td>Not healthy but low impact</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td>Healthy but not environmentally sustainable</td>
+<td>Healthy but not low impact</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td>Neither</td>
+<td>Neither</td>
+</tr>
+</tbody>
+</table>
+<p>Category numbering follows the <strong>printed row order</strong> of
+the tables.</p>
+<p>Both print <strong>six</strong> demographic columns, not eight: the
+paper restricts the composites to ages 2 and over, because the GDQS has
+not been adapted or validated below age 2.</p>
+<h2 id="the-criteria">2. The criteria</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>Diet quality</th>
+<th>Environment</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>HESD</strong> (5a)</td>
+<td>GDQS ≥ 23</td>
+<td>biodiversity loss <strong>&lt; the Table 3 absolute
+threshold</strong></td>
+</tr>
+<tr class="even">
+<td><strong>HDLEI</strong> (5b)</td>
+<td>GDQS ≥ 23</td>
+<td>biodiversity loss <strong>below P30 of the Table 4g
+distribution</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The diet-quality criterion is <strong>identical</strong> in both.
+Only the environmental criterion differs: HESD asks “is this within the
+planetary boundary share?”, HDLEI asks “is this in the lowest-impact 30%
+of the global reference distribution?”.</p>
+<p>Biodiversity loss is the paper’s proxy for total environmental impact
+(p. 4). The GDQS cut-off of 23 is its “healthy diet” criterion.</p>
+<h2 id="the-decomposed-sub-indicators">3. The decomposed
+sub-indicators</h2>
+<p>Each command writes <strong>four</strong> variables, not one. With
+the default prefix:</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Variable</th>
+<th>Type</th>
+<th>What it is</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>hesd_healthy</code></td>
+<td>0/1</td>
+<td>the GDQS criterion alone — <strong>sub-indicator</strong></td>
+</tr>
+<tr class="even">
+<td><code>hesd_envsust</code></td>
+<td>0/1</td>
+<td>the biodiversity criterion alone —
+<strong>sub-indicator</strong></td>
+</tr>
+<tr class="odd">
+<td><code>hesd_cat</code></td>
+<td>1–4</td>
+<td>the four categories</td>
+</tr>
+<tr class="even">
+<td><code>hesd</code></td>
+<td>0/1</td>
+<td>dichotomous: category 1 against everything else</td>
+</tr>
+</tbody>
+</table>
+<p>and for HDLEI: <code>hdlei_healthy</code>,
+<code>hdlei_lowimpact</code>, <code>hdlei_cat</code>,
+<code>hdlei</code>.</p>
+<p>The sub-indicators exist so that a disappointing composite can be
+attributed. A low HESD driven by <code>hesd_healthy</code> is a
+diet-quality story; one driven by <code>hesd_envsust</code> is an
+environmental story; they call for different responses.</p>
+<h2 id="no-duplicated-logic-the-environmental-criterion-is-delegated">4.
+No duplicated logic — the environmental criterion is delegated</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>* <span class="kw">in</span> eiod_hesd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>eiod_absolute biodiv, <span class="ot">value</span>(<span class="ot">`biodiversity&#39;</span>) <span class="fu">group</span>(<span class="ot">`group&#39;</span>) <span class="co">///</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">generate</span>(<span class="ot">`envall&#39;</span>) cutoffs(<span class="ot">`cutoffs&#39;</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>* <span class="kw">in</span> eiod_hdlei</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>eiod_relative biodiv, <span class="ot">value</span>(<span class="ot">`biodiversity&#39;</span>) <span class="fu">group</span>(<span class="ot">`group&#39;</span>) <span class="co">///</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">generate</span>(<span class="ot">`bandall&#39;</span>) below(<span class="ot">`percentile&#39;</span>) belowvar(<span class="ot">`lowall&#39;</span>) cutoffs(<span class="ot">`cutoffs&#39;</span>)</span></code></pre></div>
+<p>Neither composite re-implements its threshold. Each
+<strong>calls</strong> the standalone command, so
+<code>hesd_envsust</code> is identical by construction to the Table 3
+biodiversity metric, and <code>hdlei_lowimpact</code> to the Table 4g
+<code>below(30)</code> flag. There is no second copy that could drift.
+<code>eiod_validate.do</code> Part H asserts the equality.</p>
+<h2 id="the-two-composites-are-nested-do-not-present-them-as-a-22">5.
+The two composites are NESTED — do not present them as a 2×2</h2>
+<p>This is the most important thing on this page.</p>
+<p>The HDLEI environmental cut-off is <strong>uniformly 1.52×
+stricter</strong> than the HESD one, in every demographic group. Proved
+algebraically and asserted in <code>eiod_validate.do</code> Part J.
+Therefore:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="monospace">𝚑𝚍𝚕𝚎𝚒</mtext><mo>=</mo><mn>1</mn><mo>⟹</mo><mtext mathvariant="monospace">𝚑𝚎𝚜𝚍</mtext><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\texttt{hdlei} = 1 \implies \texttt{hesd} = 1</annotation></semantics></math></p>
+<p>always. They are not two independent dimensions of sustainability;
+HDLEI is a tighter version of HESD. A 2×2 of the two will have a
+structurally empty cell, and reporting them as separate findings
+double-counts the same respondents.</p>
+<h2 id="the-age-restriction-changes-every-denominator">6. The age
+restriction changes every denominator</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">tempvar</span> elig</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">qui</span> <span class="kw">gen</span> <span class="kw">byte</span> <span class="ot">`elig&#39;</span> = <span class="fu">inlist</span>(<span class="ot">`group&#39;</span>, 2, 3, 4, 6, 7, 8)</span></code></pre></div>
+<p>All four output variables are left <strong>missing</strong> for
+groups 1 and 5 (under-2s), and the number affected is reported. If your
+sample contains under-2s, decide explicitly whether they belong in the
+analysis sample — leaving them in makes every composite prevalence a
+proportion of a different denominator than the other tables.</p>
+<h2 id="syntax">7. Syntax</h2>
+<div class="sourceCode" id="cb3"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>eiod_hesd  , BIODiversity(varname) GDQS(varname) Group(varname)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    [ PREfix(<span class="bn">name</span>) GDQScut(#) CUToffs(<span class="fu">string</span>) <span class="kw">replace</span> ]</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>eiod_hdlei , BIODiversity(varname) GDQS(varname) Group(varname)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    [ PREfix(<span class="bn">name</span>) GDQScut(#) PERCentile(#) CUToffs(<span class="fu">string</span>) <span class="kw">replace</span> ]</span></code></pre></div>
+<p><code>gdqscut()</code> defaults to 23 and <code>percentile()</code>
+to 30. Change either only with a documented reason — they are the
+published criteria, and moving them makes the result incomparable with
+other EIOD work.</p>
+<h2 id="related">8. Related</h2>
+<ul>
+<li><code>eiod_fn_02_absolute.do</code>,
+<code>eiod_fn_03_relative.do</code> — the commands these delegate
+to</li>
+<li><code>eiod_validate.do</code> Part B — shows the Table 5 cut-offs
+tracing back to Tables 3 and 4g</li>
+</ul>
+<p><em>Last updated 2026-10-05.</em></p>
+</body>
+</html>

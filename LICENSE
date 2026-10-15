@@ -1,0 +1,43 @@
+MIT License
+
+Copyright (c) 2026 Nicholus Tint Zaw
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+-------------------------------------------------------------------------------
+A NOTE ON THE CUT-OFF VALUES, WHICH THIS LICENCE DOES NOT COVER
+-------------------------------------------------------------------------------
+
+The MIT licence above applies to the CODE in this repository: the Stata
+commands, the build and validation scripts, the demonstration and the
+documentation.
+
+It does NOT apply to the 616 cut-off values in functions/dta/eiod_cutoffs.csv
+and eiod_cutoffs.dta. Those are transcribed from Tables 3 and 4a-4g of:
+
+    Intake - Center for Dietary Assessment (2026).
+    Methods for Assessing Healthy, Environmentally Sustainable Diets Globally.
+
+They are reproduced here so that the metrics can be applied without re-typing
+them, with Intake credited as the source. Any rights in those values rest with
+Intake, not with the author of this package.
+
+Whether any licence condition attaches to redistributing them is an open
+question that has been put to Intake and is not yet answered. If Intake asks for
+a change in how they are distributed, it will be made.

@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>01 - the reference dataset, and exactly how exact it is</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+  <style type="text/css">
+:root {
+--ink: #1d2430;
+--ink-soft: #4a5568;
+--ink-faint: #6b7684;
+--rule: #dde3ea;
+--rule-soft: #eef2f6;
+--paper: #ffffff;
+--tint: #f6f8fa;
+--accent: #2f5d8a;
+--accent-dk: #1f4160;
+--accent-bg: #eaf1f8;
+--good: #2d6e2d;
+--good-bg: #edf7ed;
+--warn: #8a5a00;
+--warn-bg: #fff8e8;
+--bad: #a32b2b;
+--bad-bg: #fdeeee;
+--mono: "Cascadia Mono", "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+--sans: "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+}
+html { -webkit-text-size-adjust: 100%; }
+body {
+font-family: var(--sans);
+font-size: 16px;
+line-height: 1.62;
+color: var(--ink);
+background: var(--paper);
+max-width: 980px;
+margin: 0 auto;
+padding: 2.5rem 1.6rem 6rem;
+hyphens: none;
+}
+
+header#title-block-header { margin-bottom: 2.2rem; }
+h1.title {
+font-size: 1.95rem;
+line-height: 1.25;
+font-weight: 650;
+letter-spacing: -0.012em;
+margin: 0 0 .9rem;
+padding-bottom: .9rem;
+border-bottom: 3px solid var(--accent);
+color: var(--ink);
+}
+p.subtitle { color: var(--ink-soft); font-size: 1.05rem; margin-top: -.4rem; }
+
+h1, h2, h3, h4 { font-weight: 640; letter-spacing: -0.008em; color: var(--ink); }
+h1:not(.title) {
+font-size: 1.6rem;
+margin: 3rem 0 1rem;
+padding-bottom: .4rem;
+border-bottom: 2px solid var(--rule);
+}
+h2 {
+font-size: 1.32rem;
+margin: 2.6rem 0 .9rem;
+padding-bottom: .35rem;
+border-bottom: 1px solid var(--rule);
+}
+h3 { font-size: 1.1rem; margin: 2rem 0 .6rem; color: var(--accent); }
+h4 { font-size: 1rem; margin: 1.5rem 0 .5rem; color: var(--ink-soft); }
+
+nav#TOC {
+background: var(--tint);
+border: 1px solid var(--rule);
+border-left: 4px solid var(--accent);
+border-radius: 6px;
+padding: 1.1rem 1.4rem .9rem;
+margin: 0 0 2.6rem;
+font-size: .93rem;
+}
+nav#TOC::before {
+content: "Contents";
+display: block;
+font-weight: 650;
+font-size: .78rem;
+letter-spacing: .09em;
+text-transform: uppercase;
+color: var(--ink-faint);
+margin-bottom: .5rem;
+}
+nav#TOC ul { list-style: none; padding-left: 1rem; margin: .25rem 0; }
+nav#TOC > ul { padding-left: 0; }
+nav#TOC li { margin: .18rem 0; }
+nav#TOC a { color: var(--ink-soft); text-decoration: none; }
+nav#TOC a:hover { color: var(--accent); text-decoration: underline; }
+
+table {
+border-collapse: collapse;
+width: 100%;
+margin: 1.4rem 0 1.8rem;
+font-size: .91rem;
+font-variant-numeric: tabular-nums;
+}
+caption {
+caption-side: top;
+text-align: left;
+font-size: .85rem;
+color: var(--ink-faint);
+padding-bottom: .45rem;
+}
+thead th {
+background: var(--accent-bg);
+color: var(--ink);
+font-weight: 640;
+text-align: left;
+border-bottom: 2px solid var(--accent);
+padding: .55rem .7rem;
+vertical-align: bottom;
+}
+tbody td, tbody th {
+padding: .48rem .7rem;
+border-bottom: 1px solid var(--rule-soft);
+vertical-align: top;
+}
+tbody tr:nth-child(even) { background: #fbfcfd; }
+tbody tr:hover { background: var(--accent-bg); }
+tbody td:first-child { font-weight: 500; }
+
+td[style*="text-align: right"], th[style*="text-align: right"] {
+font-variant-numeric: tabular-nums;
+}
+
+code {
+font-family: var(--mono);
+font-size: .875em;
+background: var(--tint);
+border: 1px solid var(--rule);
+border-radius: 3px;
+padding: .08em .35em;
+color: #2b3a4a;
+}
+pre {
+background: var(--tint);
+border: 1px solid var(--rule);
+border-left: 4px solid var(--accent);
+border-radius: 5px;
+padding: .9rem 1.1rem;
+overflow-x: auto;
+font-size: .86rem;
+line-height: 1.5;
+}
+pre code { background: none; border: none; padding: 0; font-size: 1em; }
+
+blockquote {
+margin: 1.4rem 0;
+padding: .85rem 1.2rem;
+background: var(--warn-bg);
+border-left: 4px solid #c9a227;
+border-radius: 0 5px 5px 0;
+color: var(--ink);
+}
+blockquote p:first-child { margin-top: 0; }
+blockquote p:last-child { margin-bottom: 0; }
+
+svg { display: block; max-width: 100%; height: auto; margin: 1.6rem auto; }
+figure { margin: 1.8rem 0; }
+figcaption { font-size: .86rem; color: var(--ink-faint); text-align: center; }
+
+a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:hover { color: #1f4160; }
+hr { border: none; border-top: 1px solid var(--rule); margin: 2.6rem 0; }
+strong { font-weight: 640; }
+ul, ol { padding-left: 1.4rem; }
+li { margin: .3rem 0; }
+li > ul, li > ol { margin: .25rem 0; }
+
+body > p > em:only-child { color: var(--ink-faint); font-size: .9rem; }
+
+math { font-size: 1.02em; }
+
+@media print {
+body { max-width: none; padding: 0; font-size: 11pt; }
+nav#TOC { break-after: page; }
+h1:not(.title), h2 { break-after: avoid; }
+table, pre, svg, blockquote { break-inside: avoid; }
+tbody tr:hover { background: none; }
+a { color: var(--ink); text-decoration: none; }
+}
+@media (max-width: 680px) {
+body { padding: 1.4rem 1rem 4rem; font-size: 15px; }
+table { font-size: .84rem; }
+h1.title { font-size: 1.55rem; }
+}
+</style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">01 - the reference dataset, and exactly how exact it
+is</h1>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#eiod_build_cutoffs.do-the-reference-dataset-and-exactly-how-exact-it-is" id="toc-eiod_build_cutoffs.do-the-reference-dataset-and-exactly-how-exact-it-is"><code>eiod_build_cutoffs.do</code>
+— the reference dataset, and exactly how exact it is</a></li>
+<li><a href="#what-is-in-the-file" id="toc-what-is-in-the-file">1. What
+is in the file</a>
+<ul>
+<li><a href="#row-counts" id="toc-row-counts">Row counts</a></li>
+</ul></li>
+<li><a href="#eutrophication-is-printed-in-two-different-units" id="toc-eutrophication-is-printed-in-two-different-units">2.
+Eutrophication is printed in two different units</a>
+<ul>
+<li><a href="#the-evidence" id="toc-the-evidence">The evidence</a></li>
+<li><a href="#where-the-conversion-lives-and-why-not-here" id="toc-where-the-conversion-lives-and-why-not-here">Where the
+conversion lives — and why not here</a></li>
+</ul></li>
+<li><a href="#where-are-the-table-5a-and-5b-cut-offs" id="toc-where-are-the-table-5a-and-5b-cut-offs">3. Where are the Table
+5a and 5b cut-offs?</a>
+<ul>
+<li><a href="#why-the-code-has-no-copy-of-these-numbers" id="toc-why-the-code-has-no-copy-of-these-numbers">Why the code has no
+copy of these numbers</a></li>
+</ul></li>
+<li><a href="#are-the-stored-numbers-exactly-the-published-ones" id="toc-are-the-stored-numbers-exactly-the-published-ones">4. Are the
+stored numbers exactly the published ones?</a>
+<ul>
+<li><a href="#the-two-layers" id="toc-the-two-layers">The two
+layers</a></li>
+<li><a href="#what-the-display-was-doing-and-why-it-looked-wrong" id="toc-what-the-display-was-doing-and-why-it-looked-wrong">What the
+display was doing, and why it looked wrong</a></li>
+<li><a href="#the-same-fix-in-the-metric-commands" id="toc-the-same-fix-in-the-metric-commands">The same fix in the metric
+commands</a></li>
+<li><a href="#one-honest-caveat-about-binary-floating-point" id="toc-one-honest-caveat-about-binary-floating-point">One honest caveat
+about binary floating point</a></li>
+</ul></li>
+<li><a href="#the-build-step-by-step" id="toc-the-build-step-by-step">5.
+The build, step by step</a>
+<ul>
+<li><a href="#why-stringcols-is-not-optional" id="toc-why-stringcols-is-not-optional">Why <code>stringcols()</code> is
+not optional</a></li>
+</ul></li>
+<li><a href="#checking-it-yourself" id="toc-checking-it-yourself">6.
+Checking it yourself</a></li>
+</ul>
+</nav>
+<h1 id="eiod_build_cutoffs.do-the-reference-dataset-and-exactly-how-exact-it-is"><code>eiod_build_cutoffs.do</code>
+— the reference dataset, and exactly how exact it is</h1>
+<p><strong>Builds</strong> <code>eiod_cutoffs.dta</code> (616 rows) from
+<code>eiod_cutoffs.csv</code> <strong>Source</strong>
+Intake-EIOD-Methods-Paper-Jan2026-Final.pdf — Table 3 and Tables 4a–4g
+<strong>Verified by</strong> <code>eiod_validate.do</code> Parts A and
+B</p>
+<p>This page answers four questions that have been asked about the
+numbers: what the two value columns mean, how eutrophication is handled,
+where the Table 5a/5b cut-offs are, and whether the stored values are
+really the published ones.</p>
+<blockquote>
+<p><strong>Changed 2026-10-14.</strong> The build no longer rescales
+anything. <code>value</code> is now the cut-off <strong>exactly as
+printed</strong>, for all 616 rows, and the <code>value_published</code>
+and <code>scale_to_db_unit</code> columns are gone. The eutrophication
+unit conversion moved into <code>eiod_absolute</code>, where it is
+applied to the <em>user’s</em> variable. §2 explains why.</p>
+</blockquote>
+<hr />
+<h1 id="what-is-in-the-file">1. What is in the file</h1>
+<p>616 rows, long format — one row per <strong>metric × indicator ×
+demographic group × row</strong>.</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Column</th>
+<th>What it is</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>metric</code></td>
+<td><code>abs</code> = Table 3; <code>rel</code> = Tables 4a–4g</td>
+</tr>
+<tr class="even">
+<td><code>table</code></td>
+<td>the source table in the paper</td>
+</tr>
+<tr class="odd">
+<td><code>indicator</code>, <code>indicator_label</code>,
+<code>unit</code></td>
+<td>the seven EIOD indicators</td>
+</tr>
+<tr class="even">
+<td><code>demogroup</code> 1–8, <code>demogroup_label</code>,
+<code>sex</code>, <code>age_min</code>, <code>age_max</code></td>
+<td>the published columns</td>
+</tr>
+<tr class="odd">
+<td><code>row_order</code>, <code>percentile</code></td>
+<td>for <code>rel</code>: which decile row. <code>percentile</code> is
+missing on printed row 10</td>
+</tr>
+<tr class="even">
+<td><strong><code>value_published_str</code></strong></td>
+<td><strong>the cut-off as literal text, exactly as
+printed</strong></td>
+</tr>
+<tr class="odd">
+<td><strong><code>value</code></strong></td>
+<td>the same number parsed to <code>double</code> — <strong>exactly as
+printed, nothing rescaled</strong></td>
+</tr>
+</tbody>
+</table>
+<p><code>unit</code> is what <strong>that table</strong> is printed in.
+For six indicators it is the same in both tables. For eutrophication it
+is not: <code>kg PO4(3-)eq</code> for Table 3, <code>g PO4(3-)eq</code>
+for Table 4f. See §2.</p>
+<h2 id="row-counts">Row counts</h2>
+<table>
+<tbody>
+<tr class="odd">
+<td><code>abs</code></td>
+<td>7 indicators × 8 groups = <strong>56</strong></td>
+</tr>
+<tr class="even">
+<td><code>rel</code></td>
+<td>7 indicators × 8 groups × 10 rows = <strong>560</strong></td>
+</tr>
+<tr class="odd">
+<td><strong>total</strong></td>
+<td><strong>616</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Of the 10 <code>rel</code> rows per group, only <strong>nine</strong>
+are cut-points — P10 … P90. Printed row 10 repeats P90 as a lower bound
+and carries a missing <code>percentile</code>, which is how
+<code>eiod_relative</code> filters it out before asserting it has found
+72 cut-points per indicator.</p>
+<hr />
+<h1 id="eutrophication-is-printed-in-two-different-units">2.
+Eutrophication is printed in two different units</h1>
+<p><strong>Nothing in this file is rescaled.</strong> Every one of the
+616 values is the number the methods paper prints. The build asserts
+it:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">assert</span> <span class="ot">value</span> == <span class="fu">real</span>(value_published_str)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>cap <span class="kw">confirm</span> <span class="kw">variable</span> scale_to_db_unit</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">assert</span> <span class="dt">_rc</span> != 0                         <span class="co">// the column must not come back</span></span></code></pre></div>
+<p>But eutrophication needs explaining, because <strong>Table 3 and
+Table 4f are printed in different units</strong>:</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th style="text-align: right;">value for Male 10+</th>
+<th><code>unit</code></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Table 3 (<code>metric == &quot;abs&quot;</code>)</td>
+<td style="text-align: right;">0.0267453228</td>
+<td><strong>kg</strong> PO₄³⁻eq</td>
+</tr>
+<tr class="even">
+<td>Table 4f (<code>metric == &quot;rel&quot;</code>, P10)</td>
+<td style="text-align: right;">18.4448415122</td>
+<td><strong>g</strong> PO₄³⁻eq</td>
+</tr>
+</tbody>
+</table>
+<p>A ratio of about <strong>690</strong>, which is a unit difference and
+not a difference in environmental standard.</p>
+<h2 id="the-evidence">The evidence</h2>
+<ol type="1">
+<li><strong>The EIOF database reports eutrophication in grams.</strong>
+The country databases store it as <code>Eutr. (g PO43-e/kg)</code> —
+checked across the Burkina Faso, Ethiopia, Ghana and Viet Nam files —
+while every other indicator matches the paper’s unit
+(<code>m2/kg</code>, <code>kg CO2e/kg</code>, <code>L/kg</code>).</li>
+<li><strong>The kilogram reading is physically impossible.</strong> 18.4
+kg PO₄³⁻eq per person per <em>day</em> is 6.7 tonnes a year, more than
+the mass of food a person eats.</li>
+<li><strong>The gram reading reconciles the two tables in 8 of 8
+demographic groups.</strong> Converted to grams, the Table 3 threshold
+lands between P40 and P50 of Table 4f every time, across a 3.5× spread
+of values — where the two land indicators also sit. Unconverted it falls
+below P10, a position only greenhouse gases occupy and which the paper
+documents for greenhouse gases alone.</li>
+<li><strong>The two tables have different sources.</strong> Table 3 from
+Moberg et al. (2020) / Hallström et al. (2022), who work in kg; Tables
+4a–4g from the WWF Planet-Based Diets Database.</li>
+</ol>
+<h2 id="where-the-conversion-lives-and-why-not-here">Where the
+conversion lives — and why not here</h2>
+<p><strong>In <code>eiod_absolute</code>, applied to the user’s
+variable.</strong> Not in this dataset.</p>
+<p>Until 2026-10-14 the build multiplied the 80 Table 4f rows by 0.001,
+so every cut-off sat on one internal scale. It was arithmetically sound
+and it was documented, but it meant <strong>80 of the shipped numbers
+could not be found anywhere in the methods paper</strong> — and the
+entire point of shipping this dataset is that a reader can check it line
+by line against the PDF.</p>
+<p>So: supply eutrophication in <strong>grams</strong>, as the EIOF
+database gives it to you. <code>eiod_relative</code> needs nothing.
+<code>eiod_absolute</code> divides by 1000 and reports that it did:</p>
+<pre><code>Table 3 - absolute threshold  eutroph (kg PO4(3-)eq per capita per day)
+  created abs_eutroph
+  unit: eutroph: your values divided by 1000 (g -&gt; kg PO4(3-)eq) to match Table 3
+         supply this indicator in GRAMS, as the EIOF database reports it
+         the published cut-off is NOT altered - see eiod_absolute</code></pre>
+<blockquote>
+<p><strong>Still an inference, not something Intake has
+confirmed.</strong> The paper never states a unit for the Table 4 series
+at all. The question is with Intake; until it is answered, treat any
+eutrophication result as carrying this assumption. If the answer
+differs, the fix is one <code>local convfac</code> in
+<code>eiod_fn_02_absolute.do</code> — <strong>the reference data needs
+no change, because it was never adjusted.</strong> That is the second
+reason the conversion was moved out of it.</p>
+</blockquote>
+<p><strong>For the other six indicators there is no conversion
+anywhere</strong>, and both tables use the same unit.</p>
+<hr />
+<h1 id="where-are-the-table-5a-and-5b-cut-offs">3. Where are the Table
+5a and 5b cut-offs?</h1>
+<p><strong>They are not in the file, and they should not be.</strong>
+Tables 5a and 5b define no new cut-offs. Each reuses a cut-off that is
+already there:</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Composite</th>
+<th>Diet-quality criterion</th>
+<th>Environmental criterion</th>
+<th>Where that number comes from</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>HESD</strong> (5a)</td>
+<td>GDQS ≥ 23</td>
+<td>biodiversity &lt; absolute threshold</td>
+<td><strong>Table 3, <code>biodiv</code>,
+<code>metric == &quot;abs&quot;</code></strong></td>
+</tr>
+<tr class="even">
+<td><strong>HDLEI</strong> (5b)</td>
+<td>GDQS ≥ 23</td>
+<td>biodiversity &lt; P30</td>
+<td><strong>Table 4g, <code>biodiv</code>, <code>metric == &quot;rel&quot;</code>,
+<code>percentile == 30</code></strong></td>
+</tr>
+</tbody>
+</table>
+<p>So to check what HESD compared a respondent against:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> eiod_cutoffs.dta, <span class="kw">clear</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">keep</span> <span class="kw">if</span> metric == <span class="st">&quot;abs&quot;</span> &amp; indicator == <span class="st">&quot;biodiv&quot;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ot">list</span> demogroup value_published_str <span class="ot">value</span>, <span class="kw">noobs</span></span></code></pre></div>
+<p>and for HDLEI:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">keep</span> <span class="kw">if</span> metric == <span class="st">&quot;rel&quot;</span> &amp; indicator == <span class="st">&quot;biodiv&quot;</span> &amp; percentile == 30</span></code></pre></div>
+<p>The GDQS cut-off of <strong>23</strong> is not in the dataset either
+— it is a scalar, not a table, and lives as the <code>gdqscut(23)</code>
+default of both composite commands.</p>
+<h2 id="why-the-code-has-no-copy-of-these-numbers">Why the code has no
+copy of these numbers</h2>
+<p><code>eiod_hesd</code> and <code>eiod_hdlei</code> do not
+re-implement the comparison. They <strong>call</strong> the standalone
+command:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>* <span class="kw">in</span> eiod_hesd</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">qui</span> eiod_absolute biodiv, <span class="ot">value</span>(<span class="ot">`biodiversity&#39;</span>) <span class="fu">group</span>(<span class="ot">`group&#39;</span>) <span class="kw">generate</span>(<span class="ot">`envall&#39;</span>) ...</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>* <span class="kw">in</span> eiod_hdlei</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="kw">qui</span> eiod_relative biodiv, <span class="ot">value</span>(<span class="ot">`biodiversity&#39;</span>) <span class="fu">group</span>(<span class="ot">`group&#39;</span>) below(30) ...</span></code></pre></div>
+<p>That is why you found no cut-off values inside those two files —
+there are none to find. <code>hesd_envsust</code> is identical by
+construction to the standalone Table 3 biodiversity metric, and
+<code>hdlei_lowimpact</code> to the Table 4g <code>below(30)</code>
+flag. <code>eiod_validate.do</code> <strong>Part H</strong> asserts the
+equality and <strong>Part B</strong> traces the Table 5 criteria back to
+Tables 3 and 4g.</p>
+<p><em>(Those calls are run <code>quietly</code> and re-reported by the
+composite. Before October 2026 they were not, which is why the output
+showed <code>created __000001</code> — Stata’s internal name for the
+temporary column that becomes <code>hesd_envsust</code>. It was never a
+naming fault, but it read like one.)</em></p>
+<hr />
+<h1 id="are-the-stored-numbers-exactly-the-published-ones">4. Are the
+stored numbers exactly the published ones?</h1>
+<p><strong>Yes — and as of October 2026 you can check it without
+trusting any numeric rendering at all.</strong></p>
+<h2 id="the-two-layers">The two layers</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Column</th>
+<th>Type</th>
+<th>What it guarantees</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>value_published_str</code></td>
+<td><code>str</code></td>
+<td>the literal characters from the paper, never through a numeric
+type</td>
+</tr>
+<tr class="even">
+<td><code>value</code></td>
+<td><code>double</code></td>
+<td>the nearest IEEE 754 double to that text — <strong>and nothing else
+is done to it</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The build asserts the round trip:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> <span class="kw">double</span> _vp_back = <span class="fu">real</span>(value_published_str)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">assert</span> _vp_back == <span class="ot">value</span></span></code></pre></div>
+<p>So the numeric column reproduces the literal text exactly, for all
+616 rows.</p>
+<h2 id="what-the-display-was-doing-and-why-it-looked-wrong">What the
+display was doing, and why it looked wrong</h2>
+<p>Storage was never the problem. <strong>The display format
+was.</strong> Both numeric columns were <code>%10.0g</code>, which shows
+about 8 significant digits, so</p>
+<table>
+<tbody>
+<tr class="odd">
+<td>published</td>
+<td><code>14.2377570161</code></td>
+</tr>
+<tr class="even">
+<td>shown as</td>
+<td><code>14.237757</code></td>
+</tr>
+</tbody>
+</table>
+<p>That is a rendering, not a stored value. The format is now
+<code>%18.14g</code>, chosen because <strong>the widest cut-off in the
+table needs 14 significant digits</strong>:</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: right;">Significant digits needed</th>
+<th style="text-align: right;">Rows</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">4</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">22</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">57</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">335</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">122</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">61</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;"><strong>14</strong></td>
+<td style="text-align: right;"><strong>15</strong></td>
+</tr>
+</tbody>
+</table>
+<p><code>g</code> format drops trailing zeros, so a value needing 9
+digits is not padded out to 14.</p>
+<h2 id="the-same-fix-in-the-metric-commands">The same fix in the metric
+commands</h2>
+<p><code>eiod_absolute</code>’s <code>threshvar()</code> and
+<code>eiod_relative</code>’s new <code>cutvar()</code> now carry
+<code>%18.14g</code> too, so the threshold a respondent was compared
+against displays exactly as printed:</p>
+<pre><code>dgroup           thr_landtotal
+Female 10+ yr    11.4525532925
+Male 10+ yr      14.2377570161</code></pre>
+<p>against the published Table 3:</p>
+<pre><code>demogroup        value_published_str
+Male 10+ yr      14.2377570161
+Female 10+ yr    11.4525532925</code></pre>
+<p>Character for character.</p>
+<blockquote>
+<p><strong><code>cutvar()</code> is new.</strong>
+<code>eiod_relative</code> previously had no equivalent of
+<code>threshvar()</code>, so there was no way to see which decile
+boundary a diet was judged against. <code>cutvar()</code> stores the
+<strong>lower bound of the assigned band</strong> — the highest
+published percentile the value cleared. Band 1 is left missing, which is
+correct: nothing is published below P10.</p>
+</blockquote>
+<h2 id="one-honest-caveat-about-binary-floating-point">One honest caveat
+about binary floating point</h2>
+<p>A <code>double</code> cannot hold most decimal fractions exactly —
+that is true of every statistical package, not of this one. What
+<em>is</em> guaranteed here:</p>
+<ul>
+<li>the stored double is the <strong>nearest double</strong> to the
+published decimal;</li>
+<li>it <strong>round-trips</strong> back to that decimal;</li>
+<li><code>value_published_str</code> holds the decimal itself, so the
+published figure is in the file as text regardless.</li>
+</ul>
+<p>If an exact decimal comparison is ever needed, compare against
+<code>value_published_str</code>.</p>
+<hr />
+<h1 id="the-build-step-by-step">5. The build, step by step</h1>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Step</th>
+<th>What happens</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>import <code>eiod_cutoffs.csv</code> with
+<code>stringcols(13)</code></td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>parse to <code>double</code> with <code>real()</code> into
+<code>value</code>; keep the string as
+<code>value_published_str</code></td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td><code>assert !mi(...)</code> — <code>real()</code> returns missing
+on anything it cannot parse, so a malformed cell stops the build</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td><strong>nothing is rescaled</strong>; assert
+<code>scale_to_db_unit</code> has not come back, and
+<code>value == real(value_published_str)</code></td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>assert the round trip text → double → text</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td>structural checks: 56 <code>abs</code> + 560 <code>rel</code>;
+<code>isid</code> on the keys; age bands consistent</td>
+</tr>
+<tr class="odd">
+<td>7</td>
+<td>assert the <code>unit</code> column: one unit per indicator, except
+eutrophication which has two</td>
+</tr>
+<tr class="even">
+<td>8</td>
+<td>label, format <code>%18.14g</code>, order, compress, save</td>
+</tr>
+<tr class="odd">
+<td>9</td>
+<td>write <code>eiod_cutoffs_wide_check.csv</code> — a wide rendering
+for eyeballing against the printed tables</td>
+</tr>
+</tbody>
+</table>
+<h2 id="why-stringcols-is-not-optional">Why <code>stringcols()</code> is
+not optional</h2>
+<p><code>import delimited</code> types an 11-digit column as
+<strong>float</strong> if left to guess, and <code>recast double</code>
+afterwards cannot recover digits that were never read. Forcing the
+column to string and parsing it with <code>real()</code> is the only
+route that preserves the published precision. This was found the hard
+way — the first version of the build silently lost four significant
+digits on every cut-off.</p>
+<hr />
+<h1 id="checking-it-yourself">6. Checking it yourself</h1>
+<p>Pick any cell of any printed table and find it:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> eiod_cutoffs.dta, <span class="kw">clear</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>* Table 3, <span class="kw">total</span> land <span class="kw">use</span>, Male 10+</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="ot">list</span> value_published_str <span class="ot">value</span> <span class="kw">if</span> metric==<span class="st">&quot;abs&quot;</span> &amp; indicator==<span class="st">&quot;landtotal&quot;</span> &amp; demogroup==4, <span class="kw">noobs</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>* Table 4g, biodiversity, Female 10+, the P30 <span class="ot">row</span> that HDLEI uses</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="ot">list</span> value_published_str <span class="ot">value</span> <span class="kw">if</span> metric==<span class="st">&quot;rel&quot;</span> &amp; indicator==<span class="st">&quot;biodiv&quot;</span> <span class="co">///</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    &amp; demogroup==8 &amp; percentile==30, <span class="kw">noobs</span></span></code></pre></div>
+<p><code>eiod_cutoffs_wide_check.csv</code> lays the whole thing out
+group-by-group for comparison against the PDF.</p>
+<p><em>Last updated 2026-10-06.</em></p>
+</body>
+</html>

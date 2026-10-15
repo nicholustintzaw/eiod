@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>eiod - open questions</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+</style>
+  <style type="text/css">
+:root {
+--ink: #1d2430;
+--ink-soft: #4a5568;
+--ink-faint: #6b7684;
+--rule: #dde3ea;
+--rule-soft: #eef2f6;
+--paper: #ffffff;
+--tint: #f6f8fa;
+--accent: #2f5d8a;
+--accent-dk: #1f4160;
+--accent-bg: #eaf1f8;
+--good: #2d6e2d;
+--good-bg: #edf7ed;
+--warn: #8a5a00;
+--warn-bg: #fff8e8;
+--bad: #a32b2b;
+--bad-bg: #fdeeee;
+--mono: "Cascadia Mono", "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+--sans: "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+}
+html { -webkit-text-size-adjust: 100%; }
+body {
+font-family: var(--sans);
+font-size: 16px;
+line-height: 1.62;
+color: var(--ink);
+background: var(--paper);
+max-width: 980px;
+margin: 0 auto;
+padding: 2.5rem 1.6rem 6rem;
+hyphens: none;
+}
+
+header#title-block-header { margin-bottom: 2.2rem; }
+h1.title {
+font-size: 1.95rem;
+line-height: 1.25;
+font-weight: 650;
+letter-spacing: -0.012em;
+margin: 0 0 .9rem;
+padding-bottom: .9rem;
+border-bottom: 3px solid var(--accent);
+color: var(--ink);
+}
+p.subtitle { color: var(--ink-soft); font-size: 1.05rem; margin-top: -.4rem; }
+
+h1, h2, h3, h4 { font-weight: 640; letter-spacing: -0.008em; color: var(--ink); }
+h1:not(.title) {
+font-size: 1.6rem;
+margin: 3rem 0 1rem;
+padding-bottom: .4rem;
+border-bottom: 2px solid var(--rule);
+}
+h2 {
+font-size: 1.32rem;
+margin: 2.6rem 0 .9rem;
+padding-bottom: .35rem;
+border-bottom: 1px solid var(--rule);
+}
+h3 { font-size: 1.1rem; margin: 2rem 0 .6rem; color: var(--accent); }
+h4 { font-size: 1rem; margin: 1.5rem 0 .5rem; color: var(--ink-soft); }
+
+nav#TOC {
+background: var(--tint);
+border: 1px solid var(--rule);
+border-left: 4px solid var(--accent);
+border-radius: 6px;
+padding: 1.1rem 1.4rem .9rem;
+margin: 0 0 2.6rem;
+font-size: .93rem;
+}
+nav#TOC::before {
+content: "Contents";
+display: block;
+font-weight: 650;
+font-size: .78rem;
+letter-spacing: .09em;
+text-transform: uppercase;
+color: var(--ink-faint);
+margin-bottom: .5rem;
+}
+nav#TOC ul { list-style: none; padding-left: 1rem; margin: .25rem 0; }
+nav#TOC > ul { padding-left: 0; }
+nav#TOC li { margin: .18rem 0; }
+nav#TOC a { color: var(--ink-soft); text-decoration: none; }
+nav#TOC a:hover { color: var(--accent); text-decoration: underline; }
+
+table {
+border-collapse: collapse;
+width: 100%;
+margin: 1.4rem 0 1.8rem;
+font-size: .91rem;
+font-variant-numeric: tabular-nums;
+}
+caption {
+caption-side: top;
+text-align: left;
+font-size: .85rem;
+color: var(--ink-faint);
+padding-bottom: .45rem;
+}
+thead th {
+background: var(--accent-bg);
+color: var(--ink);
+font-weight: 640;
+text-align: left;
+border-bottom: 2px solid var(--accent);
+padding: .55rem .7rem;
+vertical-align: bottom;
+}
+tbody td, tbody th {
+padding: .48rem .7rem;
+border-bottom: 1px solid var(--rule-soft);
+vertical-align: top;
+}
+tbody tr:nth-child(even) { background: #fbfcfd; }
+tbody tr:hover { background: var(--accent-bg); }
+tbody td:first-child { font-weight: 500; }
+
+td[style*="text-align: right"], th[style*="text-align: right"] {
+font-variant-numeric: tabular-nums;
+}
+
+code {
+font-family: var(--mono);
+font-size: .875em;
+background: var(--tint);
+border: 1px solid var(--rule);
+border-radius: 3px;
+padding: .08em .35em;
+color: #2b3a4a;
+}
+pre {
+background: var(--tint);
+border: 1px solid var(--rule);
+border-left: 4px solid var(--accent);
+border-radius: 5px;
+padding: .9rem 1.1rem;
+overflow-x: auto;
+font-size: .86rem;
+line-height: 1.5;
+}
+pre code { background: none; border: none; padding: 0; font-size: 1em; }
+
+blockquote {
+margin: 1.4rem 0;
+padding: .85rem 1.2rem;
+background: var(--warn-bg);
+border-left: 4px solid #c9a227;
+border-radius: 0 5px 5px 0;
+color: var(--ink);
+}
+blockquote p:first-child { margin-top: 0; }
+blockquote p:last-child { margin-bottom: 0; }
+
+svg { display: block; max-width: 100%; height: auto; margin: 1.6rem auto; }
+figure { margin: 1.8rem 0; }
+figcaption { font-size: .86rem; color: var(--ink-faint); text-align: center; }
+
+a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:hover { color: #1f4160; }
+hr { border: none; border-top: 1px solid var(--rule); margin: 2.6rem 0; }
+strong { font-weight: 640; }
+ul, ol { padding-left: 1.4rem; }
+li { margin: .3rem 0; }
+li > ul, li > ol { margin: .25rem 0; }
+
+body > p > em:only-child { color: var(--ink-faint); font-size: .9rem; }
+
+math { font-size: 1.02em; }
+
+@media print {
+body { max-width: none; padding: 0; font-size: 11pt; }
+nav#TOC { break-after: page; }
+h1:not(.title), h2 { break-after: avoid; }
+table, pre, svg, blockquote { break-inside: avoid; }
+tbody tr:hover { background: none; }
+a { color: var(--ink); text-decoration: none; }
+}
+@media (max-width: 680px) {
+body { padding: 1.4rem 1rem 4rem; font-size: 15px; }
+table { font-size: .84rem; }
+h1.title { font-size: 1.55rem; }
+}
+</style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">eiod - open questions</h1>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#open-questions" id="toc-open-questions">Open questions</a>
+<ul>
+<li><a href="#eutrophication-is-table-4f-printed-in-grams" id="toc-eutrophication-is-table-4f-printed-in-grams">1. Eutrophication:
+is Table 4f printed in grams?</a></li>
+<li><a href="#value-cells-in-the-eiof-country-databases" id="toc-value-cells-in-the-eiof-country-databases">2.
+<code>#VALUE!</code> cells in the EIOF country databases</a></li>
+<li><a href="#licence-to-redistribute-the-transcribed-cut-off-values" id="toc-licence-to-redistribute-the-transcribed-cut-off-values">3.
+Licence to redistribute the transcribed cut-off values</a></li>
+<li><a href="#preferred-citation-form" id="toc-preferred-citation-form">4. Preferred citation form</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="open-questions">Open questions</h1>
+<p>Four things this package cannot settle on its own. Each is filed as a
+GitHub issue so it can be answered in one place, by the people who know,
+with the answer permanently attached to the code it affects.</p>
+<p><strong>Questions 1 and 2 are for Intake and affect the
+numbers.</strong> Questions 3 and 4 are administrative but gate
+publication.</p>
+<hr />
+<h2 id="eutrophication-is-table-4f-printed-in-grams">1. Eutrophication:
+is Table 4f printed in grams?</h2>
+<p><strong>Affects:</strong> every absolute-threshold eutrophication
+result, in this package and in <code>reiod</code>.
+<strong>Status:</strong> open. The package currently assumes
+<strong>yes</strong>.</p>
+<p>Tables 4a–4g carry no unit anywhere in the paper. For eutrophication,
+Table 4f’s benchmarks are about <strong>690×</strong> the Table 3
+threshold for the same demographic group:</p>
+<table>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 40%" />
+<col style="width: 30%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Male 10+</th>
+<th style="text-align: right;">value</th>
+<th>source</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Table 3, absolute threshold</td>
+<td style="text-align: right;">0.0267453228</td>
+<td>stated on p.29 to be kg PO₄³⁻eq</td>
+</tr>
+<tr class="even">
+<td>Table 4f, 10th percentile</td>
+<td style="text-align: right;">18.4448415122</td>
+<td>no unit given</td>
+</tr>
+</tbody>
+</table>
+<p>That reconciles exactly if <strong>Table 3 is in kilograms and Table
+4f is in grams</strong>. Four things point the same way:</p>
+<ol type="1">
+<li><p><strong>The EIOF country databases report eutrophication in
+grams</strong> — the column is <code>Eutr. (g PO43-e/kg)</code> in the
+Burkina Faso, Ethiopia, Ghana and Viet Nam files, while every other
+indicator matches the paper’s unit (<code>m2/kg</code>,
+<code>kg CO2e/kg</code>, <code>L/kg</code>).</p></li>
+<li><p><strong>The kilogram reading is physically impossible</strong> —
+18.4 kg PO₄³⁻eq per person per <em>day</em> is 6.7 tonnes a year, more
+than the mass of food a person eats.</p></li>
+<li><p><strong>The gram reading reconciles the two tables in all eight
+demographic groups.</strong> Converted to grams, the Table 3 threshold
+lands between P40 and P50 of Table 4f every time, across a 3.5× spread
+of values — where the total-land and pasture-land thresholds also sit.
+Unconverted it falls below P10, a position only greenhouse gases occupy
+and which the paper documents for greenhouse gases alone.</p>
+<table>
+<thead>
+<tr class="header">
+<th>group</th>
+<th style="text-align: right;">Table 3 ×1000 (g)</th>
+<th style="text-align: center;">lands at</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Male 0–1.9</td>
+<td style="text-align: right;">7.68</td>
+<td style="text-align: center;">P40–P50</td>
+</tr>
+<tr class="even">
+<td>Male 2–4.9</td>
+<td style="text-align: right;">11.92</td>
+<td style="text-align: center;">P40–P50</td>
+</tr>
+<tr class="odd">
+<td>Male 5–9.9</td>
+<td style="text-align: right;">16.42</td>
+<td style="text-align: center;">P40–P50</td>
+</tr>
+<tr class="even">
+<td>Male 10+</td>
+<td style="text-align: right;">26.75</td>
+<td style="text-align: center;">P40–P50</td>
+</tr>
+<tr class="odd">
+<td>Female 0–1.9</td>
+<td style="text-align: right;">7.44</td>
+<td style="text-align: center;">P40–P50</td>
+</tr>
+<tr class="even">
+<td>Female 2–4.9</td>
+<td style="text-align: right;">11.04</td>
+<td style="text-align: center;">P40–P50</td>
+</tr>
+<tr class="odd">
+<td>Female 5–9.9</td>
+<td style="text-align: right;">15.07</td>
+<td style="text-align: center;">P40–P50</td>
+</tr>
+<tr class="even">
+<td>Female 10+</td>
+<td style="text-align: right;">21.51</td>
+<td style="text-align: center;">P40–P50</td>
+</tr>
+</tbody>
+</table></li>
+<li><p><strong>The two tables come from different sources</strong> —
+Table 3 from the planetary-boundary work of Moberg et al. (2020) and
+Hallström et al. (2022), who work in kg; Tables 4a–4g from the WWF
+Planet-Based Diets Database.</p></li>
+</ol>
+<p><strong>What the package does meanwhile.</strong> Nothing in
+<code>eiod_cutoffs.dta</code> is rescaled — every one of the 616 values
+is exactly what the paper prints. The user supplies eutrophication in
+grams, and <code>eiod_absolute</code> divides by 1000 before comparing
+against Table 3, keeping the converted value as
+<code>&lt;yourvar&gt;_kg</code> so the chain can be checked by eye. The
+adjustment is one local in one file, so a different answer costs one
+line.</p>
+<p><strong>The question:</strong> can you confirm that Table 4f is
+printed in grams PO₄³⁻eq and Table 3 in kilograms?</p>
+<hr />
+<h2 id="value-cells-in-the-eiof-country-databases">2.
+<code>#VALUE!</code> cells in the EIOF country databases</h2>
+<p><strong>Affects:</strong> any analysis built on the country EIOF
+files, not this package directly. <strong>Status:</strong> open.</p>
+<p>Each of the four country databases we hold contains <strong>537
+<code>#VALUE!</code> cells in each of the seven impact columns</strong>
+— 3,759 per file, 8.4% of the 6,361-row food list:</p>
+<table>
+<thead>
+<tr class="header">
+<th>File</th>
+<th style="text-align: right;">rows</th>
+<th style="text-align: right;"><code>#VALUE!</code> cells</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Burkina Faso EIOF Database 052726.csv</td>
+<td style="text-align: right;">6,361</td>
+<td style="text-align: right;">3,759</td>
+</tr>
+<tr class="even">
+<td>Ethiopia EIOF Database 052726.csv</td>
+<td style="text-align: right;">6,361</td>
+<td style="text-align: right;">3,759</td>
+</tr>
+<tr class="odd">
+<td>Ghana EIOF Database 052726.csv</td>
+<td style="text-align: right;">6,361</td>
+<td style="text-align: right;">3,759</td>
+</tr>
+<tr class="even">
+<td>Viet Nam EIOF Database 052726.csv</td>
+<td style="text-align: right;">6,361</td>
+<td style="text-align: right;">3,759</td>
+</tr>
+</tbody>
+</table>
+<p>The practical consequence is that <strong>every impact column imports
+as text</strong>, not as a number. In R, <code>as.numeric()</code> then
+returns <code>NA</code> with a warning that is easy to miss, and those
+foods drop silently out of every impact total.</p>
+<p><strong>The question:</strong> should <code>#VALUE!</code> be read as
+“no impact factor available for this food”, or is it a formula error in
+the export that will be corrected?</p>
+<hr />
+<h2 id="licence-to-redistribute-the-transcribed-cut-off-values">3.
+Licence to redistribute the transcribed cut-off values</h2>
+<p><strong>Status:</strong> open. <strong>Gates</strong> an SSC
+submission and a Zenodo DOI.</p>
+<p>Both this package and <code>reiod</code> ship the 616 cut-off values
+transcribed from Tables 3 and 4a–4g, so that a user can apply the
+metrics without re-typing them. Intake is credited as the source in the
+README, in <code>CITATION.cff</code> and in <code>LICENSE</code>.</p>
+<p>Two distinct things are involved: <strong>the code</strong>, which is
+MIT-licensed and ours, and <strong>the cut-off values</strong>, which
+are not ours. The MIT licence explicitly does not extend to them — see
+<code>LICENSE</code>.</p>
+<p><strong>The question:</strong> is there any licence condition or
+restriction we should observe in redistributing these values in an
+open-source package, and in publishing them on GitHub and later on the
+SSC archive?</p>
+<hr />
+<h2 id="preferred-citation-form">4. Preferred citation form</h2>
+<p><strong>Status:</strong> open.</p>
+<p><code>CITATION.cff</code> currently cites <em>Methods for Assessing
+Healthy, Environmentally Sustainable Diets Globally</em> (Intake, 2026)
+as the source of the definitions and the cut-offs.</p>
+<p><strong>The question:</strong> is that sufficient, or should the EIOF
+database be cited separately from the methods paper? Is there an
+acknowledgement wording you would prefer?</p>
+<p>Whatever you tell us goes into both the Stata and the R package at
+the same time.</p>
+<hr />
+<p><em>Answers will be recorded in the issue thread and in this file.
+Last updated 2026-10-14.</em></p>
+</body>
+</html>
