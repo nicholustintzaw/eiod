@@ -148,6 +148,19 @@ Prints a type/range/zero-count table and then the graded findings.
 
 - that the **unit** matches the EIOF database (m²·year, kg CO₂eq, kg PO₄eq, litres, PDF·year)
 - that the value is a respondent-**day** total, already summed across every ingredient
+- **that every consumed food was costed at all** — see below
+
+### Incomplete EIOF coverage, and why no check can reach it
+
+Not every food has an impact factor. The EIOF country databases mark foods with no available estimate, and such a food contributes **nothing** to the day's total — so a respondent who ate one has an impact understated by an unknown amount.
+
+**This is not a gap in the check suite; it is outside what any check could observe.** `eiod_check_impact` and `_eiod_precheck` receive a variable holding one number per respondent-day. Whether that number was summed over five costed foods or four costed and one missing is not a property of the number. The aggregation discarded the evidence one step before the command was called.
+
+The only detectable case is the degenerate one: if *every* food for a respondent lacked a factor and the upstream code produced `0` rather than missing, the zeros count in the standalone table shows it, and the `float with some exact zeros` rule above grades it. That rule exists for exactly this family of upstream faults — a diet that was consumed cannot have zero impact. **Partial coverage produces a perfectly ordinary number and leaves no trace.**
+
+It matters more for these metrics than for most, because each respondent is compared against a **fixed external cut-off** rather than against the rest of the sample: uneven coverage shifts classifications with nothing in the output looking wrong.
+
+**Handle it where the evidence still exists** — in the aggregation step that builds the day-level variable. Count the consumed items with no factor, or better the **share of consumed weight** that carries one, and report it with any prevalence. A share of the food list is not the same as a share of intake, and the two can differ by a lot in either direction.
 
 Neither is inferable from the numbers alone. The scale check catches gross unit errors; it cannot catch a factor of three.
 

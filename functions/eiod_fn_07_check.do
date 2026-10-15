@@ -78,6 +78,40 @@
                     stops a wrong number being produced; a note does not stop
                     anything.
 
+  ** OUT OF REACH   INCOMPLETE EIOF COVERAGE cannot be checked here, and this
+     OF ANY CHECK   is a property of the data flow rather than a gap to fill.
+
+                    Not every food has an impact factor; the EIOF country
+                    databases mark foods with no available estimate. Such a
+                    food contributes NOTHING to the day's total, so a
+                    respondent who ate one has an impact understated by an
+                    unknown amount.
+
+                    These commands receive ONE NUMBER PER RESPONDENT-DAY.
+                    Whether it was summed over five costed foods, or four
+                    costed and one missing, is not a property of that number -
+                    the aggregation discarded the evidence one step earlier.
+                    No test applied to the variable can recover it.
+
+                    The one detectable case is the degenerate one: if EVERY
+                    food lacked a factor and the upstream code produced 0
+                    rather than missing, the zeros count shows it and check 1
+                    grades it. That rule exists for this family of faults - a
+                    diet that was consumed cannot have zero impact. Partial
+                    coverage leaves no trace.
+
+                    It matters more for these metrics than for most, because
+                    each respondent is compared against a FIXED EXTERNAL
+                    cut-off rather than against the rest of the sample: uneven
+                    coverage shifts classifications with nothing in the output
+                    looking wrong.
+
+                    Handle it where the evidence still exists - in the step
+                    that aggregates food items to the respondent-day. Count the
+                    consumed items with no factor, or better the SHARE OF
+                    CONSUMED WEIGHT that carries one, and report it alongside
+                    any prevalence. See readme/06_eiod_infrastructure.md.
+
   ** LAST UPDATE    2026-10-05
 */
 

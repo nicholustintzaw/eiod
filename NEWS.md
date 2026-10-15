@@ -19,6 +19,13 @@ Diets methods paper (January 2026), as Stata do-files.
 
 ## Known limitations
 
+* **Incomplete EIOF coverage is an upstream responsibility.** Not every food has an impact
+  factor; a food without one contributes nothing to the day total, so the total is understated.
+  These commands receive one number per respondent-day and cannot detect it - the aggregation
+  discarded the evidence. Count the share of consumed weight carrying a factor when you
+  aggregate, and report it with any prevalence. See README section 5b and
+  `functions/readme/06_eiod_infrastructure.md`.
+
 * **The eutrophication unit reading is an inference.** The paper states no unit for Tables
   4a–4g; the package reads Table 4f as grams and Table 3 as kilograms. See
   `functions/readme/01_eiod_build_cutoffs.md` §2 for the evidence. The question is with Intake.

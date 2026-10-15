@@ -299,7 +299,11 @@ no fixed directories</a>
 package</a></li>
 </ul></li>
 <li><a href="#input-qc-and-what-the-precision-risk-actually-is" id="toc-input-qc-and-what-the-precision-risk-actually-is">5. Input QC —
-and what the precision risk actually is</a></li>
+and what the precision risk actually is</a>
+<ul>
+<li><a href="#b.-incomplete-eiof-coverage-yours-to-handle-upstream" id="toc-b.-incomplete-eiof-coverage-yours-to-handle-upstream">5b.
+Incomplete EIOF coverage — yours to handle, upstream</a></li>
+</ul></li>
 <li><a href="#three-findings-that-affect-how-you-report-these-metrics" id="toc-three-findings-that-affect-how-you-report-these-metrics">6.
 Three findings that affect how you report these metrics</a></li>
 <li><a href="#b.-are-the-cut-offs-exactly-the-published-ones" id="toc-b.-are-the-cut-offs-exactly-the-published-ones">6b. Are the
@@ -675,6 +679,52 @@ existing scripts do not break. <code>strict</code> makes it
 EIOF database, and that the value is a respondent-<em>day</em> total
 already summed across ingredients. Neither is inferable from the
 numbers.</p>
+<h2 id="b.-incomplete-eiof-coverage-yours-to-handle-upstream">5b.
+Incomplete EIOF coverage — yours to handle, upstream</h2>
+<p><strong>Not every food has an impact factor.</strong> The EIOF
+country databases mark foods with no available estimate — in the files
+we have seen, as <code>#VALUE!</code> in each of the seven impact
+columns. Those are genuinely missing values, not an export fault, and
+there is nothing to repair.</p>
+<p>But a food with no factor contributes <strong>nothing</strong> to the
+day’s total. A respondent who ate five items, one of them uncosted, has
+an impact summed from four — <strong>understated by an unknown
+amount.</strong></p>
+<p><strong>These commands cannot detect that, and no check
+could.</strong> By the time you call <code>eiod_absolute</code>, you are
+passing one variable holding one number per respondent-day. Whether it
+was summed over complete or incomplete coverage is not recoverable from
+the number: the aggregation discarded that one step earlier.</p>
+<p>One exception, the extreme case. If <em>every</em> food for a
+respondent lacked a factor and your code summed to <code>0</code> rather
+than missing, that is visible — <code>eiod_check_impact</code> reports a
+zeros count per variable, because a diet that was consumed cannot have
+zero impact. <strong>Partial coverage leaves no trace at
+all.</strong></p>
+<blockquote>
+<p><strong>Why it matters more here than in most analyses.</strong>
+These metrics compare each respondent against a <strong>fixed external
+cut-off</strong>, not against the rest of your sample. Uneven coverage
+therefore shifts results without anything in the output looking wrong: a
+respondent with 30% of intake uncovered is not comparable with one at
+2%, yet both produce a perfectly ordinary number and both get
+classified.</p>
+</blockquote>
+<p><strong>What to do, before the data reaches these
+commands:</strong></p>
+<ol type="1">
+<li>When you aggregate to the respondent-day, <strong>count the consumed
+items with no impact factor</strong> and keep the count.</li>
+<li>Better, compute the <strong>share of consumed weight</strong> that
+carries a factor. A count of items misleads in either direction — one
+uncovered staple matters more than six uncovered garnishes.</li>
+<li><strong>Report it</strong> alongside any prevalence you publish, and
+decide explicitly whether respondents below some coverage threshold
+belong in the denominator.</li>
+</ol>
+<p>A percentage of the <em>food list</em> tells you nothing about the
+share of <em>intake</em> affected. The two can differ by a lot, either
+way.</p>
 <hr />
 <h1 id="three-findings-that-affect-how-you-report-these-metrics">6.
 Three findings that affect how you report these metrics</h1>

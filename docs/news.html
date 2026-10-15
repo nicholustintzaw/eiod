@@ -249,20 +249,28 @@ reads, so the two cannot drift at the data layer.</li>
 </ul>
 <h2 id="known-limitations">Known limitations</h2>
 <ul>
-<li><strong>The eutrophication unit reading is an inference.</strong>
+<li><p><strong>Incomplete EIOF coverage is an upstream
+responsibility.</strong> Not every food has an impact factor; a food
+without one contributes nothing to the day total, so the total is
+understated. These commands receive one number per respondent-day and
+cannot detect it - the aggregation discarded the evidence. Count the
+share of consumed weight carrying a factor when you aggregate, and
+report it with any prevalence. See README section 5b and
+<code>functions/readme/06_eiod_infrastructure.md</code>.</p></li>
+<li><p><strong>The eutrophication unit reading is an inference.</strong>
 The paper states no unit for Tables 4a–4g; the package reads Table 4f as
 grams and Table 3 as kilograms. See
 <code>functions/readme/01_eiod_build_cutoffs.md</code> §2 for the
-evidence. The question is with Intake.</li>
-<li><strong>No automated test run in CI.</strong> Stata is licensed
+evidence. The question is with Intake.</p></li>
+<li><p><strong>No automated test run in CI.</strong> Stata is licensed
 software and GitHub’s runners do not have it, so
 <code>validate/eiod_validate.do</code> is run locally and its result
 recorded. The CI workflow checks structure only — see
-<code>.github/workflows/checks.yml</code>.</li>
-<li><strong><code>.do</code> files, not <code>.ado</code>.</strong> Load
-them with <code>eiod_load_functions.do</code> before your analysis. A
-conversion to <code>.ado</code> with <code>.sthlp</code> help files is
-planned; see the package plan.</li>
+<code>.github/workflows/checks.yml</code>.</p></li>
+<li><p><strong><code>.do</code> files, not <code>.ado</code>.</strong>
+Load them with <code>eiod_load_functions.do</code> before your analysis.
+A conversion to <code>.ado</code> with <code>.sthlp</code> help files is
+planned; see the package plan.</p></li>
 </ul>
 </body>
 </html>
