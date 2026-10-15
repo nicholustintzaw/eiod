@@ -10,6 +10,8 @@ subtitle: "Environmental Impact of Diets: Tables 3, 4a–4g, 5a and 5b as Stata 
 [![Stata](https://img.shields.io/badge/Stata-18-1a5f7a)](https://www.stata.com)
 [![R companion: reiod](https://img.shields.io/badge/R%20companion-reiod-2d6e2d)](https://github.com/nicholustintzaw/reiod)
 
+### 📖 Documentation: **<https://nicholustintzaw.github.io/eiod/>**
+
 A small set of Stata commands implementing the metrics in **[Intake-EIOD-Methods-Paper-Jan2026-Final.pdf](https://www.intake.org/sites/default/files/2026-01/Intake-EIOD-Methods-Paper-Jan2026-Final.pdf)**. No `.ado` installation, no SSC dependencies — plain do-files you load at the top of a session.
 
 **Stata 18** · **v0.1.0** · **2026-10-14**
