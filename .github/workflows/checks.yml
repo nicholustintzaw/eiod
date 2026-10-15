@@ -175,10 +175,17 @@ jobs:
         with:
           pandoc-version: '3.1.1'
 
+      # Invoked as `bash build_docs.sh`, not `./build_docs.sh`, so the step does
+      # not depend on the executable bit. The repository is developed on
+      # Windows, where core.filemode is false: a local `chmod +x` is invisible
+      # to git, and the file was committed 100644. It is 100755 now - set with
+      # `git update-index --chmod=+x` - but anyone re-adding it from a Windows
+      # checkout could drop the bit again without noticing, and this step
+      # should not be what tells them.
       - name: docs/ regenerates without changes
         run: |
           pandoc --version | head -1
-          ./build_docs.sh
+          bash build_docs.sh
           if ! git diff --quiet -- docs/; then
             echo "" >&2
             echo "docs/ is out of date, OR this runner's pandoc differs from the" >&2
