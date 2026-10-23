@@ -790,9 +790,11 @@ calling the command, remove the division.</strong> See
 <hr />
 <h1 id="b.-are-the-cut-offs-exactly-the-published-ones">6b. Are the
 cut-offs exactly the published ones?</h1>
-<p><strong>Yes — every one of the 616, with nothing rescaled.</strong>
-Since October 2026 the dataset carries the published number and nothing
-derived from it:</p>
+<p><strong>608 of the 616 are the published number exactly, with nothing
+rescaled.</strong> The other eight are the Table 3 eutrophication
+cut-offs Intake corrected — item 4 above — and <code>value_source</code>
+marks them so you never have to guess which. Apart from those eight, the
+dataset carries the published number and nothing derived from it:</p>
 <table>
 <colgroup>
 <col style="width: 33%" />
@@ -821,14 +823,18 @@ through a numeric type</td>
 </tr>
 </tbody>
 </table>
+<div class="line-block"><code>value_source</code> | string |
+<code>published</code>, or <code>intake correction 2026-10</code> for
+the eight |</div>
 <p>The <code>value_published</code> and <code>scale_to_db_unit</code>
 columns are <strong>gone</strong>. Until October 2026, 80 relative
 eutrophication rows were stored pre-divided by 1000 so that every
 cut-off sat on one internal scale; it worked, but it meant 80 shipped
-numbers could not be found anywhere in the methods paper. The conversion
-now happens inside <code>eiod_absolute</code>, applied to <em>your</em>
-variable. <strong>Pick any row and you will find it, character for
-character, in the PDF.</strong></p>
+numbers could not be found anywhere in the methods paper. Nothing is
+rescaled now, by the build or by any command. <strong>Pick any row with
+<code>value_source == &quot;published&quot;</code> and you will find it, character
+for character, in the PDF; the eight corrected rows are the printed
+figure × 1000.</strong></p>
 <p>The display format is <code>%18.14g</code>, because the widest
 cut-off in the table needs <strong>14 significant digits</strong>. The
 old <code>%10.0g</code> showed about 8, so <code>14.2377570161</code>

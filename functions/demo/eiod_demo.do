@@ -91,9 +91,9 @@ gen double pasture_ado  = exp(rnormal(ln(4),     1.0))   // m2*year   pasture
 gen double ghg_ado      = exp(rnormal(ln(3),     0.7))   // kg CO2eq
 * EUTROPHICATION IS IN GRAMS, and deliberately so. The EIOF country databases
 * report `Eutr. (g PO43-e/kg)', so a respondent total built from them is in
-* grams - unlike every other indicator, whose EIOF unit matches the paper.
-* Table 4f is printed in grams too; eiod_absolute converts to kg for Table 3
-* and says so. See readme/03_eiod_absolute.md.
+* grams. Both cut-off tables are in grams too - Table 4f as printed, Table 3
+* as corrected by Intake in October 2026 - so nothing is converted anywhere.
+* See readme/03_eiod_absolute.md.
 gen double eutr_ado     = exp(rnormal(ln(20),    0.7))   // g PO4(3-)eq
 gen double water_ado    = exp(rnormal(ln(600),   0.6))   // litres
 gen double biodiv_ado   = exp(rnormal(ln(8e-13), 1.0))   // PDF*year

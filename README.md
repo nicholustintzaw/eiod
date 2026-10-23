@@ -244,14 +244,16 @@ The methods paper prints the Table 3 eutrophication row in **kilograms** while T
 
 # 6b. Are the cut-offs exactly the published ones?
 
-**Yes — every one of the 616, with nothing rescaled.** Since October 2026 the dataset carries the published number and nothing derived from it:
+**608 of the 616 are the published number exactly, with nothing rescaled.** The other eight are the Table 3 eutrophication cut-offs Intake corrected — item 4 above — and `value_source` marks them so you never have to guess which. Apart from those eight, the dataset carries the published number and nothing derived from it:
 
 | Column | Type | |
 |---|---|---|
 | `value_published_str` | string | **the literal characters from the paper**, never through a numeric type |
 | `value` | double | the nearest IEEE 754 double to that text; round-trips back to it (asserted at build) — and what the commands use |
 
-The `value_published` and `scale_to_db_unit` columns are **gone**. Until October 2026, 80 relative eutrophication rows were stored pre-divided by 1000 so that every cut-off sat on one internal scale; it worked, but it meant 80 shipped numbers could not be found anywhere in the methods paper. The conversion now happens inside `eiod_absolute`, applied to *your* variable. **Pick any row and you will find it, character for character, in the PDF.**
+| `value_source` | string | `published`, or `intake correction 2026-10` for the eight |
+
+The `value_published` and `scale_to_db_unit` columns are **gone**. Until October 2026, 80 relative eutrophication rows were stored pre-divided by 1000 so that every cut-off sat on one internal scale; it worked, but it meant 80 shipped numbers could not be found anywhere in the methods paper. Nothing is rescaled now, by the build or by any command. **Pick any row with `value_source == "published"` and you will find it, character for character, in the PDF; the eight corrected rows are the printed figure × 1000.**
 
 The display format is `%18.14g`, because the widest cut-off in the table needs **14 significant digits**. The old `%10.0g` showed about 8, so `14.2377570161` appeared as `14.237757` — a rendering, never a stored value.
 
