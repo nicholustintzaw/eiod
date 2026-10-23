@@ -6,7 +6,9 @@
 
 This page answers four questions that have been asked about the numbers: what the two value columns mean, how eutrophication is handled, where the Table 5a/5b cut-offs are, and whether the stored values are really the published ones.
 
-> **Changed 2026-10-14.** The build no longer rescales anything. `value` is now the cut-off **exactly as printed**, for all 616 rows, and the `value_published` and `scale_to_db_unit` columns are gone. The eutrophication unit conversion moved into `eiod_absolute`, where it is applied to the *user's* variable. §2 explains why.
+> **Changed 2026-10-22.** Intake corrected the eight Table 3 eutrophication thresholds: the published PDF prints them in kilograms, and both cut-off tables are meant to be in grams. **Those eight rows no longer match the PDF**, and are flagged by the new `value_source` column. The unit conversion `eiod_absolute` used to apply is gone with them. §2 has the detail.
+>
+> *(Changed 2026-10-14: the build stopped rescaling the 80 Table 4f rows, and the `value_published` and `scale_to_db_unit` columns were dropped.)*
 
 ---
 
@@ -22,9 +24,10 @@ This page answers four questions that have been asked about the numbers: what th
 | `demogroup` 1–8, `demogroup_label`, `sex`, `age_min`, `age_max` | the published columns |
 | `row_order`, `percentile` | for `rel`: which decile row. `percentile` is missing on printed row 10 |
 | **`value_published_str`** | **the cut-off as literal text, exactly as printed** |
-| **`value`** | the same number parsed to `double` — **exactly as printed, nothing rescaled** |
+| **`value`** | the same number parsed to `double` — **nothing is rescaled here** |
+| **`value_source`** | `published`, or `intake correction 2026-10` for the eight corrected rows |
 
-`unit` is what **that table** is printed in. For six indicators it is the same in both tables. For eutrophication it is not: `kg PO4(3-)eq` for Table 3, `g PO4(3-)eq` for Table 4f. See §2.
+`unit` is what that table is printed in - the same across both tables for every indicator. `value_source` is `published` for 608 rows and `intake correction 2026-10` for the eight Table 3 eutrophication thresholds, which are the only rows that do not match the PDF. See §2.
 
 ## Row counts
 
@@ -38,51 +41,89 @@ Of the 10 `rel` rows per group, only **nine** are cut-points — P10 … P90. Pr
 
 ---
 
-# 2. Eutrophication is printed in two different units
+# 2. Eutrophication: eight cut-offs corrected by Intake
 
-**Nothing in this file is rescaled.** Every one of the 616 values is the number the methods paper prints. The build asserts it:
+**Everything in this file is the cut-off exactly as received — nothing is rescaled.** For 608 rows "as received" means "as printed in the methods paper". The remaining **eight** are corrections Intake supplied by email in October 2026, and `value_source` marks them:
+
+```stata
+. list demogroup_label value value_source if value_source != "published", noobs
+```
+
+The build asserts both facts:
 
 ```stata
 assert value == real(value_published_str)
 cap confirm variable scale_to_db_unit
-assert _rc != 0                         // the column must not come back
+assert _rc != 0                         // the rescaling column must not come back
+count if value_source != "published"
+assert r(N) == 8
 ```
 
-But eutrophication needs explaining, because **Table 3 and Table 4f are printed in different units**:
+## What was wrong
 
-| | value for Male 10+ | `unit` |
+The paper prints the **Table 3 eutrophication** row in **kilograms** PO₄³⁻eq, while Table 4f — and the EIOF country databases — use **grams**:
+
+| | value for Male 10+, as printed | unit |
 |---|---:|---|
 | Table 3 (`metric == "abs"`) | 0.0267453228 | **kg** PO₄³⁻eq |
 | Table 4f (`metric == "rel"`, P10) | 18.4448415122 | **g** PO₄³⁻eq |
 
-A ratio of about **690**, which is a unit difference and not a difference in environmental standard.
+A ratio of about **690**, which is a unit difference and not a difference in environmental standard. Intake confirmed that both tables are intended to be in grams, and supplied corrected Table 3 values.
 
-## The evidence
+## What changed, and what did not
 
-1. **The EIOF database reports eutrophication in grams.** The country databases store it as `Eutr. (g PO43-e/kg)` — checked across the Burkina Faso, Ethiopia, Ghana and Viet Nam files — while every other indicator matches the paper's unit (`m2/kg`, `kg CO2e/kg`, `L/kg`).
-2. **The kilogram reading is physically impossible.** 18.4 kg PO₄³⁻eq per person per *day* is 6.7 tonnes a year, more than the mass of food a person eats.
-3. **The gram reading reconciles the two tables in 8 of 8 demographic groups.** Converted to grams, the Table 3 threshold lands between P40 and P50 of Table 4f every time, across a 3.5× spread of values — where the two land indicators also sit. Unconverted it falls below P10, a position only greenhouse gases occupy and which the paper documents for greenhouse gases alone.
-4. **The two tables have different sources.** Table 3 from Moberg et al. (2020) / Hallström et al. (2022), who work in kg; Tables 4a–4g from the WWF Planet-Based Diets Database.
+**The quantity did not change.** The corrected values are the printed ones × 1000, carried to full precision:
 
-## Where the conversion lives — and why not here
+| Demographic group | PDF (kg) | shipped (g) |
+|---|---:|---:|
+| Male 0–1.9 yr | 0.0076827204 | 7.6827203674384066 |
+| Male 2–4.9 yr | 0.0119198764 | 11.919876448673117 |
+| Male 5–9.9 yr | 0.0164158298 | 16.415829847434384 |
+| Male 10+ yr | 0.0267453228 | 26.745322780673799 |
+| Female 0–1.9 yr | 0.0074439228 | 7.4439228426109629 |
+| Female 2–4.9 yr | 0.0110398856 | 11.039885569912013 |
+| Female 5–9.9 yr | 0.0150718438 | 15.071843778053791 |
+| Female 10+ yr | 0.0215133770 | 21.51337701058506 |
 
-**In `eiod_absolute`, applied to the user's variable.** Not in this dataset.
+Divide any shipped value by 1000 and you recover the printed figure to the ten decimals the PDF gives. The build and `eiod_validate.do` both assert exactly that, so the two can never silently part company.
 
-Until 2026-10-14 the build multiplied the 80 Table 4f rows by 0.001, so every cut-off sat on one internal scale. It was arithmetically sound and it was documented, but it meant **80 of the shipped numbers could not be found anywhere in the methods paper** — and the entire point of shipping this dataset is that a reader can check it line by line against the PDF.
+**No classification moves.** Tested on 400,000 simulated gram-scale values, the old behaviour (divide the user's grams by 1000, compare against the PDF's kilograms) and the new one (compare grams directly) agreed everywhere. They can differ only within about one ULP of a cut-off — and there the new path is the more exact, because it no longer divides before comparing.
 
-So: supply eutrophication in **grams**, as the EIOF database gives it to you. `eiod_relative` needs nothing. `eiod_absolute` divides by 1000 and reports that it did:
+## How to use it
+
+**Supply eutrophication in grams, as the EIOF database gives it to you, and convert nothing.** Every indicator now uses one unit across both tables:
 
 ```
-Table 3 - absolute threshold  eutroph (kg PO4(3-)eq per capita per day)
+Table 3 - absolute threshold  eutroph (g PO4(3-)eq per capita per day)
   created abs_eutroph
-  unit: eutroph: your values divided by 1000 (g -> kg PO4(3-)eq) to match Table 3
-         supply this indicator in GRAMS, as the EIOF database reports it
-         the published cut-off is NOT altered - see eiod_absolute
+  note: the Table 3 eutrophication thresholds were CORRECTED BY INTAKE
+         in Oct 2026 and DIFFER FROM THE PUBLISHED PDF, which prints them
+         in kg. Both tables are in grams; supply grams, convert nothing.
+  below threshold:  54.4% of 3000 diets
 ```
 
-> **Still an inference, not something Intake has confirmed.** The paper never states a unit for the Table 4 series at all. The question is with Intake; until it is answered, treat any eutrophication result as carrying this assumption. If the answer differs, the fix is one `local convfac` in `eiod_fn_02_absolute.do` — **the reference data needs no change, because it was never adjusted.** That is the second reason the conversion was moved out of it.
+> **If you have a script written before October 2026 that divided eutrophication by 1000 before calling `eiod_absolute`, remove the division.** The command used to do it for you and no longer does; dividing now would make results wrong by a factor of a thousand in the other direction.
 
-**For the other six indicators there is no conversion anywhere**, and both tables use the same unit.
+## How the problem was found
+
+Worth recording, because the same reasoning applies to any reference table shipped without units.
+
+The paper states no unit for Tables 4a–4g anywhere. The decisive test was that the ratio between the two tables is **constant across all eight demographic groups** — a methodological difference would vary by group, a unit difference cannot. Comparing that ratio across indicators put eutrophication three orders of magnitude outside the range of the other six:
+
+| Indicator | Table 4 P10 ÷ Table 3 threshold |
+|---|---:|
+| Pasture land use | 0.026 |
+| Total land use | 0.285 |
+| Water use | 0.346 |
+| Biodiversity loss | 0.548 |
+| Arable land use | 0.688 |
+| Greenhouse gas emissions | 1.449 |
+| **Eutrophication (as published)** | **689.647** |
+| **Eutrophication ÷ 1000** | **0.690** |
+
+Supporting evidence: the EIOF databases report `Eutr. (g PO43-e/kg)` while every other column matches the paper's unit, and the kilogram reading implies a 10th-percentile adult diet of 18.4 kg PO₄³⁻eq **per day**. That analysis was put to Intake as a technical note; the correction above is their reply.
+
+**For the other six indicators there is no correction and no conversion**, and both tables use the same unit.
 
 ---
 
@@ -213,7 +254,7 @@ If an exact decimal comparison is ever needed, compare against `value_published_
 | 1 | import `eiod_cutoffs.csv` with `stringcols(13)` |
 | 2 | parse to `double` with `real()` into `value`; keep the string as `value_published_str` |
 | 3 | `assert !mi(...)` — `real()` returns missing on anything it cannot parse, so a malformed cell stops the build |
-| 4 | **nothing is rescaled**; assert `scale_to_db_unit` has not come back, and `value == real(value_published_str)` |
+| 4 | **nothing is rescaled**; assert `scale_to_db_unit` has not come back, `value == real(value_published_str)`, and that exactly 8 rows carry a `value_source` other than `published` |
 | 5 | assert the round trip text → double → text |
 | 6 | structural checks: 56 `abs` + 560 `rel`; `isid` on the keys; age bands consistent |
 | 7 | assert the `unit` column: one unit per indicator, except eutrophication which has two |

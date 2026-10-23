@@ -286,12 +286,8 @@ metrics</h1>
 original table</a></li>
 <li><a href="#the-workflow" id="toc-the-workflow">2. The workflow</a>
 <ul>
-<li><a href="#step-3b-the-one-unit-conversion-in-the-package" id="toc-step-3b-the-one-unit-conversion-in-the-package">STEP 3b — the
-one unit conversion in the package</a></li>
-<li><a href="#the-converted-value-is-kept-not-discarded" id="toc-the-converted-value-is-kept-not-discarded">The converted value
-is kept, not discarded</a></li>
-<li><a href="#three-things-about-this-are-deliberate" id="toc-three-things-about-this-are-deliberate">Three things about this
-are deliberate</a></li>
+<li><a href="#step-3b-no-unit-conversion-for-any-indicator" id="toc-step-3b-no-unit-conversion-for-any-indicator">STEP 3b — no unit
+conversion, for any indicator</a></li>
 <li><a href="#step-3-eight-numbers-asserted" id="toc-step-3-eight-numbers-asserted">STEP 3 — eight numbers,
 asserted</a></li>
 <li><a href="#step-4-the-comparison" id="toc-step-4-the-comparison">STEP
@@ -319,7 +315,15 @@ D, I</p>
 <p>Table 3, <em>“Cut-Offs by Demographic Group for Absolute Threshold
 Metrics”</em> — <strong>7 indicator rows × 8 demographic
 columns</strong>, one number per cell:</p>
-<table>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+</colgroup>
 <thead>
 <tr class="header">
 <th>Indicator</th>
@@ -365,7 +369,7 @@ columns</strong>, one number per cell:</p>
 </tr>
 <tr class="odd">
 <td>Eutrophication</td>
-<td>kg PO₄³⁻eq</td>
+<td><strong>g</strong> PO₄³⁻eq (corrected; the PDF prints kg)</td>
 <td></td>
 <td></td>
 <td></td>
@@ -401,100 +405,62 @@ is not a statement about how a diet compares with other diets — that is
  STEP 2   validate output names; group ∈ 1..8         else exit 459
  STEP 2b  QC the input variable                       storage, sign, underflow, scale
  STEP 3   read the 8 thresholds into a temporary FRAME
- STEP 3b  put the USER&#39;S values on this table&#39;s unit  ← eutrophication only
  STEP 4   apply the threshold, group by group    ← THE CALCULATION
  STEP 5   value-label the result
  STEP 6   report and return</code></pre>
-<h3 id="step-3b-the-one-unit-conversion-in-the-package">STEP 3b — the
-one unit conversion in the package</h3>
-<p><strong>Six of the seven indicators pass through untouched.</strong>
-The EIOF database, the methods paper and both cut-off tables agree on
-their units, so <code>convfac</code> is 1 and nothing happens.</p>
-<p><strong>Eutrophication is the exception</strong>, because the EIOF
-country databases report it as <code>Eutr. (g PO43-e/kg)</code> — in
-grams — while Table 3 is printed in kilograms:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">tempvar</span> vcmp</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">local</span> convfac = 1</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">local</span> convnote <span class="st">&quot;&quot;</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> <span class="st">&quot;`ind&#39;&quot;</span> == <span class="st">&quot;eutroph&quot;</span> {</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">local</span> convfac = 0.001</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">local</span> convnote <span class="st">&quot;eutroph: your values divided by 1000 (g -&gt; kg PO4(3-)eq) to match Table 3&quot;</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="kw">qui</span> <span class="kw">gen</span> <span class="kw">double</span> <span class="ot">`vcmp&#39;</span> = <span class="ot">`value&#39;</span> * <span class="ot">`convfac&#39;</span></span></code></pre></div>
-<h3 id="the-converted-value-is-kept-not-discarded">The converted value
-is kept, not discarded</h3>
-<p>A conversion the user cannot see is a conversion the user has to take
-on trust. So the command leaves
-<strong><code>&lt;yourvar&gt;_kg</code></strong> behind — for
-<code>eutr_ado</code> you get <code>eutr_ado_kg</code> — and the whole
-chain reads off one table:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>. <span class="ot">list</span> eutr_ado eutr_ado_kg thr_eutroph abs_eutroph <span class="kw">in</span> 1/4, <span class="kw">noobs</span> <span class="fu">abbrev</span>(14)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  +---------------------------------------------------------------------+</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  |  eutr_ado         eutr_ado_kg   thr_eutroph             abs_eutroph |</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  |---------------------------------------------------------------------|</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  |  28.12399    .028123990101136    .021513377   At <span class="kw">or</span> above threshold |</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  | 13.702354    .013702354382423    .021513377         Below threshold |</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  | 10.901663    .010901662567893   .0267453228         Below threshold |</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  | 54.282283    .054282282809918   .0267453228   At <span class="kw">or</span> above threshold |</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  +---------------------------------------------------------------------+</span></code></pre></div>
-<p>grams → kilograms → the published Table 3 threshold → the result.</p>
-<p><strong>The comparison uses that very variable</strong>, not a
-parallel copy, so what you see is literally what was tested. The demo
-asserts it:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">assert</span> <span class="fu">reldif</span>(eutr_ado_kg, eutr_ado / 1000) &lt; 1e-12 <span class="kw">if</span> !<span class="fu">mi</span>(eutr_ado)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">assert</span> abs_eutroph == (eutr_ado_kg &lt; thr_eutroph)   <span class="kw">if</span> !<span class="fu">mi</span>(eutr_ado_kg)</span></code></pre></div>
-<p>Housekeeping: the name is honoured by <code>replace</code>, a
-collision without <code>replace</code> is an error like any other
-<code>generate</code>, and a name longer than 32 characters is refused
-with a message telling you to shorten the input variable.
-<code>r(convvar)</code> returns the name, <code>r(convfac)</code> the
-multiplier.</p>
-<p>In the R package the vector API means there is no dataset to write
-into, so the same information lands in the detail frame:
-<code>eiod_absolute_threshold(..., details = TRUE)</code> returns a
-<code>value_kg</code> column alongside <code>value</code>,
-<code>cutoff</code> and <code>below</code>.</p>
-<h3 id="three-things-about-this-are-deliberate">Three things about this
-are deliberate</h3>
-<ol type="1">
-<li><strong>It converts the user’s value, never the published
-cut-off.</strong> <code>eiod_cutoffs.dta</code> holds exactly what the
-paper prints for all 616 rows, so it can be checked line by line against
-the PDF. Before 2026-10-14 the 80 Table 4f rows were stored pre-divided
-and matched nothing in the source document.</li>
-<li><strong>It is announced in the output</strong>, every time, under
-<code>unit:</code>. It is the only place in the package where a number
-you supplied is altered before use, and it should be visible in your
-log.</li>
-<li><strong>It is one local in one file.</strong> If Intake confirms a
-different reading, the fix is <code>local convfac</code> and nothing
-else — the reference data needs no change, because it was never
-adjusted.</li>
-</ol>
-<p><code>eiod_relative</code> has no equivalent step: Table 4f is
-printed in grams, so a gram input needs no conversion there.</p>
+<h3 id="step-3b-no-unit-conversion-for-any-indicator">STEP 3b — no unit
+conversion, for any indicator</h3>
+<p><strong>There used to be one here, and its removal is the main change
+of October 2026.</strong></p>
+<p>Between July and October the command divided eutrophication values by
+1000 before comparing, because the published Table 3 printed that row in
+<strong>kilograms</strong> while Table 4f and the EIOF databases use
+<strong>grams</strong>. The converted value was kept as
+<code>&lt;yourvar&gt;_kg</code> so the step was visible.</p>
+<p><strong>Intake confirmed that both tables are in grams</strong> and
+supplied corrected Table 3 thresholds. Those now ship in
+<code>eiod_cutoffs.dta</code>, flagged by <code>value_source</code>, and
+the division is gone:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>* nothing between reading the thresholds and applying them</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">forvalues</span> g = 1/8 {</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">qui</span> <span class="kw">replace</span> <span class="ot">`generate&#39;</span> = (<span class="ot">`value&#39;</span> &lt; <span class="ot">`thr`g&#39;</span>&#39;) <span class="co">///</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> <span class="ot">`group&#39;</span> == <span class="ot">`g&#39;</span> &amp; !<span class="fu">mi</span>(<span class="ot">`value&#39;</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p><strong>Supply eutrophication in GRAMS and convert nothing.</strong>
+The command reports that these thresholds differ from the PDF, every
+time it is run on this indicator:</p>
+<pre><code>Table 3 - absolute threshold  eutroph (g PO4(3-)eq per capita per day)
+  created abs_eutroph
+  note: the Table 3 eutrophication thresholds were CORRECTED BY INTAKE
+         in Oct 2026 and DIFFER FROM THE PUBLISHED PDF, which prints them
+         in kg. Both tables are in grams; supply grams, convert nothing.</code></pre>
 <blockquote>
-<p><strong>Supply eutrophication in GRAMS.</strong> See
-<code>01_eiod_build_cutoffs.md</code> §2 for the evidence, and note that
-the unit reading is an inference Intake has not yet confirmed.</p>
+<p><strong>If you have a script written before October 2026</strong>
+that divided eutrophication by 1000 before calling this command,
+<strong>remove the division.</strong> The command no longer does it for
+you, so dividing now makes results wrong by a factor of a thousand in
+the other direction.</p>
 </blockquote>
+<p><strong>The quantities did not change</strong> — the corrected
+thresholds are the printed ones × 1000 — so no classification moves. See
+<code>01_eiod_build_cutoffs.md</code> §2 for the evidence, the per-group
+table, and how the discrepancy was found.</p>
 <h3 id="step-3-eight-numbers-asserted">STEP 3 — eight numbers,
 asserted</h3>
-<div class="sourceCode" id="cb5"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">qui</span> <span class="kw">keep</span> <span class="kw">if</span> metric == <span class="st">&quot;abs&quot;</span> &amp; indicator == <span class="st">&quot;`ind&#39;&quot;</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> _N != 8 { ... <span class="kw">exit</span> 459 }</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">qui</span> <span class="kw">isid</span> demogroup</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">qui</span> <span class="kw">keep</span> <span class="kw">if</span> metric == <span class="st">&quot;abs&quot;</span> &amp; indicator == <span class="st">&quot;`ind&#39;&quot;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> _N != 8 { ... <span class="kw">exit</span> 459 }</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">qui</span> <span class="kw">isid</span> demogroup</span></code></pre></div>
 <p>Read in a <code>frame</code>, so the analyst’s data in memory is
 never touched. If the cut-off file does not hold exactly eight
 thresholds for the indicator — one per group, no duplicates — the
 command stops rather than computing against a partial table.</p>
 <h3 id="step-4-the-comparison">STEP 4 — the comparison</h3>
-<div class="sourceCode" id="cb6"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">qui</span> <span class="kw">gen</span> <span class="kw">byte</span> <span class="ot">`generate&#39;</span> = .</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="kw">forvalues</span> g = 1/8 {</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">qui</span> <span class="kw">replace</span> <span class="ot">`generate&#39;</span> = (<span class="ot">`value&#39;</span> &lt; <span class="ot">`thr`g&#39;</span>&#39;) <span class="co">///</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> <span class="ot">`group&#39;</span> == <span class="ot">`g&#39;</span> &amp; !<span class="fu">mi</span>(<span class="ot">`value&#39;</span>)</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">qui</span> <span class="kw">gen</span> <span class="kw">byte</span> <span class="ot">`generate&#39;</span> = .</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">forvalues</span> g = 1/8 {</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">qui</span> <span class="kw">replace</span> <span class="ot">`generate&#39;</span> = (<span class="ot">`value&#39;</span> &lt; <span class="ot">`thr`g&#39;</span>&#39;) <span class="co">///</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> <span class="ot">`group&#39;</span> == <span class="ot">`g&#39;</span> &amp; !<span class="fu">mi</span>(<span class="ot">`value&#39;</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p><strong>Strictly <code>&lt;</code>, and that is deliberate.</strong>
 The published cut-offs carry a “&lt;” sign, so a diet sitting
 <em>exactly on</em> the threshold is <strong>not</strong> below it and
@@ -533,8 +499,8 @@ Part D tests this.</p>
 respondent was compared against, so a reader can see the number without
 opening the cut-off file.</p>
 <h2 id="syntax">3. Syntax</h2>
-<div class="sourceCode" id="cb7"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>eiod_absolute INDICATOR , Value(varname) Group(varname) GENerate(<span class="bn">name</span>)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    [ THRESHvar(<span class="bn">name</span>) CUToffs(<span class="fu">string</span>) <span class="kw">replace</span> <span class="ot">strict</span> nocheck ]</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>eiod_absolute INDICATOR , Value(varname) Group(varname) GENerate(<span class="bn">name</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    [ THRESHvar(<span class="bn">name</span>) CUToffs(<span class="fu">string</span>) <span class="kw">replace</span> <span class="ot">strict</span> nocheck ]</span></code></pre></div>
 <table>
 <thead>
 <tr class="header">

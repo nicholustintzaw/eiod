@@ -132,35 +132,44 @@ eiod_absolute_all, group(dgroup)      ///
 di as txt _n "created: `r(n_ind)' indicators -> `r(indlist)'"
 
 * ---------------------------------------------------------------------------- *
-* 3b. THE EUTROPHICATION CONVERSION, VISIBLE
+* 3b. EUTROPHICATION - NO CONVERSION, AND A CUT-OFF THAT IS NOT IN THE PDF
 * ---------------------------------------------------------------------------- *
 /*
    eutr_ado is in GRAMS, because that is what the EIOF database gives you:
    kg food consumed x `Eutr. (g PO43-e/kg)' = g PO4(3-)eq per person per day.
 
-   Table 3, though, is printed in KILOGRAMS. So eiod_absolute converted the
-   values - and kept the converted variable rather than discarding it, so the
-   whole chain can be checked by eye:
+   Both cut-off tables are in grams too, so the comparison is direct:
 
-       eutr_ado  -> eutr_ado_kg  -> compared with thr_eutroph  -> abs_eutroph
-         (g)          (/1000)         (published Table 3)         (0/1)
+       eutr_ado  ->  compared with thr_eutroph  ->  abs_eutroph
+         (g)            (Table 3, in grams)           (0/1)
 
-   Nothing about this is hidden inside the command. The cut-off in
-   thr_eutroph is exactly the number printed in the paper; the only thing
-   that moved is your own value.
+   CHANGED OCT 2026. Until then the published Table 3 printed this row in
+   KILOGRAMS, and this command divided your values by 1000 to match. Intake
+   confirmed both tables are in grams and supplied corrected Table 3 values,
+   so the division is gone. If you have an older script that divided
+   eutrophication by 1000 before calling eiod_absolute, remove it.
 */
 di as txt _n "{hline 78}"
-di as txt "Eutrophication: g -> kg, and the Table 3 comparison, end to end"
+di as txt "Eutrophication: the Table 3 comparison, in grams throughout"
 di as txt "{hline 78}"
-list eutr_ado eutr_ado_kg thr_eutroph abs_eutroph in 1/8, noobs abbrev(14)
+list eutr_ado thr_eutroph abs_eutroph in 1/8, noobs abbrev(14)
 
-* the arithmetic is exactly what it looks like
-assert reldif(eutr_ado_kg, eutr_ado / 1000) < 1e-12 if !mi(eutr_ado)
-assert abs_eutroph == (eutr_ado_kg < thr_eutroph)   if !mi(eutr_ado_kg)
-di as result "verified: eutr_ado_kg == eutr_ado / 1000, and it is what was compared"
+* the comparison is exactly what it looks like - no hidden step
+assert abs_eutroph == (eutr_ado < thr_eutroph) if !mi(eutr_ado)
+di as result "verified: abs_eutroph == (eutr_ado < thr_eutroph), nothing converted"
 
-* Table 4f needs no conversion - it is printed in grams, like your input
-di as txt _n "Table 4f is already in grams, so rel_eutroph used eutr_ado directly."
+/*
+   THE THRESHOLD ITSELF IS NOT IN THE PUBLISHED PDF.
+
+   thr_eutroph carries Intake's corrected value. The paper prints the same
+   quantity in kilograms, so PDF x 1000 reproduces it - which is what makes
+   this a unit correction rather than a changed standard.
+*/
+qui su thr_eutroph if dgroup == 4, meanonly
+di as txt _n "Male 10+ : shipped " as res %15.10f r(mean) as txt " g   (corrected by Intake)"
+di as txt     "           the PDF prints " as res "0.0267453228" as txt " kg = " ///
+              as res %15.10f (0.0267453228 * 1000) as txt " g"
+assert reldif(r(mean), 0.0267453228 * 1000) < 1e-8
 
 * ============================================================================ *
 * 4. TABLES 4a-4g - relative benchmark bands, all seven, in ONE call

@@ -286,12 +286,16 @@ is in the file</a>
 <ul>
 <li><a href="#row-counts" id="toc-row-counts">Row counts</a></li>
 </ul></li>
-<li><a href="#eutrophication-is-printed-in-two-different-units" id="toc-eutrophication-is-printed-in-two-different-units">2.
-Eutrophication is printed in two different units</a>
+<li><a href="#eutrophication-eight-cut-offs-corrected-by-intake" id="toc-eutrophication-eight-cut-offs-corrected-by-intake">2.
+Eutrophication: eight cut-offs corrected by Intake</a>
 <ul>
-<li><a href="#the-evidence" id="toc-the-evidence">The evidence</a></li>
-<li><a href="#where-the-conversion-lives-and-why-not-here" id="toc-where-the-conversion-lives-and-why-not-here">Where the
-conversion lives — and why not here</a></li>
+<li><a href="#what-was-wrong" id="toc-what-was-wrong">What was
+wrong</a></li>
+<li><a href="#what-changed-and-what-did-not" id="toc-what-changed-and-what-did-not">What changed, and what did
+not</a></li>
+<li><a href="#how-to-use-it" id="toc-how-to-use-it">How to use
+it</a></li>
+<li><a href="#how-the-problem-was-found" id="toc-how-the-problem-was-found">How the problem was found</a></li>
 </ul></li>
 <li><a href="#where-are-the-table-5a-and-5b-cut-offs" id="toc-where-are-the-table-5a-and-5b-cut-offs">3. Where are the Table
 5a and 5b cut-offs?</a>
@@ -332,12 +336,16 @@ numbers: what the two value columns mean, how eutrophication is handled,
 where the Table 5a/5b cut-offs are, and whether the stored values are
 really the published ones.</p>
 <blockquote>
-<p><strong>Changed 2026-10-14.</strong> The build no longer rescales
-anything. <code>value</code> is now the cut-off <strong>exactly as
-printed</strong>, for all 616 rows, and the <code>value_published</code>
-and <code>scale_to_db_unit</code> columns are gone. The eutrophication
-unit conversion moved into <code>eiod_absolute</code>, where it is
-applied to the <em>user’s</em> variable. §2 explains why.</p>
+<p><strong>Changed 2026-10-22.</strong> Intake corrected the eight Table
+3 eutrophication thresholds: the published PDF prints them in kilograms,
+and both cut-off tables are meant to be in grams. <strong>Those eight
+rows no longer match the PDF</strong>, and are flagged by the new
+<code>value_source</code> column. The unit conversion
+<code>eiod_absolute</code> used to apply is gone with them. §2 has the
+detail.</p>
+<p><em>(Changed 2026-10-14: the build stopped rescaling the 80 Table 4f
+rows, and the <code>value_published</code> and
+<code>scale_to_db_unit</code> columns were dropped.)</em></p>
 </blockquote>
 <hr />
 <h1 id="what-is-in-the-file">1. What is in the file</h1>
@@ -385,15 +393,22 @@ printed</strong></td>
 </tr>
 <tr class="odd">
 <td><strong><code>value</code></strong></td>
-<td>the same number parsed to <code>double</code> — <strong>exactly as
-printed, nothing rescaled</strong></td>
+<td>the same number parsed to <code>double</code> — <strong>nothing is
+rescaled here</strong></td>
+</tr>
+<tr class="even">
+<td><strong><code>value_source</code></strong></td>
+<td><code>published</code>, or <code>intake correction 2026-10</code>
+for the eight corrected rows</td>
 </tr>
 </tbody>
 </table>
-<p><code>unit</code> is what <strong>that table</strong> is printed in.
-For six indicators it is the same in both tables. For eutrophication it
-is not: <code>kg PO4(3-)eq</code> for Table 3, <code>g PO4(3-)eq</code>
-for Table 4f. See §2.</p>
+<p><code>unit</code> is what that table is printed in - the same across
+both tables for every indicator. <code>value_source</code> is
+<code>published</code> for 608 rows and
+<code>intake correction 2026-10</code> for the eight Table 3
+eutrophication thresholds, which are the only rows that do not match the
+PDF. See §2.</p>
 <h2 id="row-counts">Row counts</h2>
 <table>
 <tbody>
@@ -417,22 +432,30 @@ and carries a missing <code>percentile</code>, which is how
 <code>eiod_relative</code> filters it out before asserting it has found
 72 cut-points per indicator.</p>
 <hr />
-<h1 id="eutrophication-is-printed-in-two-different-units">2.
-Eutrophication is printed in two different units</h1>
-<p><strong>Nothing in this file is rescaled.</strong> Every one of the
-616 values is the number the methods paper prints. The build asserts
-it:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">assert</span> <span class="ot">value</span> == <span class="fu">real</span>(value_published_str)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>cap <span class="kw">confirm</span> <span class="kw">variable</span> scale_to_db_unit</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">assert</span> <span class="dt">_rc</span> != 0                         <span class="co">// the column must not come back</span></span></code></pre></div>
-<p>But eutrophication needs explaining, because <strong>Table 3 and
-Table 4f are printed in different units</strong>:</p>
+<h1 id="eutrophication-eight-cut-offs-corrected-by-intake">2.
+Eutrophication: eight cut-offs corrected by Intake</h1>
+<p><strong>Everything in this file is the cut-off exactly as received —
+nothing is rescaled.</strong> For 608 rows “as received” means “as
+printed in the methods paper”. The remaining <strong>eight</strong> are
+corrections Intake supplied by email in October 2026, and
+<code>value_source</code> marks them:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>. <span class="ot">list</span> demogroup_label <span class="ot">value</span> value_source <span class="kw">if</span> value_source != <span class="st">&quot;published&quot;</span>, <span class="kw">noobs</span></span></code></pre></div>
+<p>The build asserts both facts:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">assert</span> <span class="ot">value</span> == <span class="fu">real</span>(value_published_str)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>cap <span class="kw">confirm</span> <span class="kw">variable</span> scale_to_db_unit</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">assert</span> <span class="dt">_rc</span> != 0                         <span class="co">// the rescaling column must not come back</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">count</span> <span class="kw">if</span> value_source != <span class="st">&quot;published&quot;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">assert</span> <span class="fu">r</span>(<span class="kw">N</span>) == 8</span></code></pre></div>
+<h2 id="what-was-wrong">What was wrong</h2>
+<p>The paper prints the <strong>Table 3 eutrophication</strong> row in
+<strong>kilograms</strong> PO₄³⁻eq, while Table 4f — and the EIOF
+country databases — use <strong>grams</strong>:</p>
 <table>
 <thead>
 <tr class="header">
 <th></th>
-<th style="text-align: right;">value for Male 10+</th>
-<th><code>unit</code></th>
+<th style="text-align: right;">value for Male 10+, as printed</th>
+<th>unit</th>
 </tr>
 </thead>
 <tbody>
@@ -449,57 +472,149 @@ Table 4f are printed in different units</strong>:</p>
 </tbody>
 </table>
 <p>A ratio of about <strong>690</strong>, which is a unit difference and
-not a difference in environmental standard.</p>
-<h2 id="the-evidence">The evidence</h2>
-<ol type="1">
-<li><strong>The EIOF database reports eutrophication in grams.</strong>
-The country databases store it as <code>Eutr. (g PO43-e/kg)</code> —
-checked across the Burkina Faso, Ethiopia, Ghana and Viet Nam files —
-while every other indicator matches the paper’s unit
-(<code>m2/kg</code>, <code>kg CO2e/kg</code>, <code>L/kg</code>).</li>
-<li><strong>The kilogram reading is physically impossible.</strong> 18.4
-kg PO₄³⁻eq per person per <em>day</em> is 6.7 tonnes a year, more than
-the mass of food a person eats.</li>
-<li><strong>The gram reading reconciles the two tables in 8 of 8
-demographic groups.</strong> Converted to grams, the Table 3 threshold
-lands between P40 and P50 of Table 4f every time, across a 3.5× spread
-of values — where the two land indicators also sit. Unconverted it falls
-below P10, a position only greenhouse gases occupy and which the paper
-documents for greenhouse gases alone.</li>
-<li><strong>The two tables have different sources.</strong> Table 3 from
-Moberg et al. (2020) / Hallström et al. (2022), who work in kg; Tables
-4a–4g from the WWF Planet-Based Diets Database.</li>
-</ol>
-<h2 id="where-the-conversion-lives-and-why-not-here">Where the
-conversion lives — and why not here</h2>
-<p><strong>In <code>eiod_absolute</code>, applied to the user’s
-variable.</strong> Not in this dataset.</p>
-<p>Until 2026-10-14 the build multiplied the 80 Table 4f rows by 0.001,
-so every cut-off sat on one internal scale. It was arithmetically sound
-and it was documented, but it meant <strong>80 of the shipped numbers
-could not be found anywhere in the methods paper</strong> — and the
-entire point of shipping this dataset is that a reader can check it line
-by line against the PDF.</p>
-<p>So: supply eutrophication in <strong>grams</strong>, as the EIOF
-database gives it to you. <code>eiod_relative</code> needs nothing.
-<code>eiod_absolute</code> divides by 1000 and reports that it did:</p>
-<pre><code>Table 3 - absolute threshold  eutroph (kg PO4(3-)eq per capita per day)
+not a difference in environmental standard. Intake confirmed that both
+tables are intended to be in grams, and supplied corrected Table 3
+values.</p>
+<h2 id="what-changed-and-what-did-not">What changed, and what did
+not</h2>
+<p><strong>The quantity did not change.</strong> The corrected values
+are the printed ones × 1000, carried to full precision:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Demographic group</th>
+<th style="text-align: right;">PDF (kg)</th>
+<th style="text-align: right;">shipped (g)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Male 0–1.9 yr</td>
+<td style="text-align: right;">0.0076827204</td>
+<td style="text-align: right;">7.6827203674384066</td>
+</tr>
+<tr class="even">
+<td>Male 2–4.9 yr</td>
+<td style="text-align: right;">0.0119198764</td>
+<td style="text-align: right;">11.919876448673117</td>
+</tr>
+<tr class="odd">
+<td>Male 5–9.9 yr</td>
+<td style="text-align: right;">0.0164158298</td>
+<td style="text-align: right;">16.415829847434384</td>
+</tr>
+<tr class="even">
+<td>Male 10+ yr</td>
+<td style="text-align: right;">0.0267453228</td>
+<td style="text-align: right;">26.745322780673799</td>
+</tr>
+<tr class="odd">
+<td>Female 0–1.9 yr</td>
+<td style="text-align: right;">0.0074439228</td>
+<td style="text-align: right;">7.4439228426109629</td>
+</tr>
+<tr class="even">
+<td>Female 2–4.9 yr</td>
+<td style="text-align: right;">0.0110398856</td>
+<td style="text-align: right;">11.039885569912013</td>
+</tr>
+<tr class="odd">
+<td>Female 5–9.9 yr</td>
+<td style="text-align: right;">0.0150718438</td>
+<td style="text-align: right;">15.071843778053791</td>
+</tr>
+<tr class="even">
+<td>Female 10+ yr</td>
+<td style="text-align: right;">0.0215133770</td>
+<td style="text-align: right;">21.51337701058506</td>
+</tr>
+</tbody>
+</table>
+<p>Divide any shipped value by 1000 and you recover the printed figure
+to the ten decimals the PDF gives. The build and
+<code>eiod_validate.do</code> both assert exactly that, so the two can
+never silently part company.</p>
+<p><strong>No classification moves.</strong> Tested on 400,000 simulated
+gram-scale values, the old behaviour (divide the user’s grams by 1000,
+compare against the PDF’s kilograms) and the new one (compare grams
+directly) agreed everywhere. They can differ only within about one ULP
+of a cut-off — and there the new path is the more exact, because it no
+longer divides before comparing.</p>
+<h2 id="how-to-use-it">How to use it</h2>
+<p><strong>Supply eutrophication in grams, as the EIOF database gives it
+to you, and convert nothing.</strong> Every indicator now uses one unit
+across both tables:</p>
+<pre><code>Table 3 - absolute threshold  eutroph (g PO4(3-)eq per capita per day)
   created abs_eutroph
-  unit: eutroph: your values divided by 1000 (g -&gt; kg PO4(3-)eq) to match Table 3
-         supply this indicator in GRAMS, as the EIOF database reports it
-         the published cut-off is NOT altered - see eiod_absolute</code></pre>
+  note: the Table 3 eutrophication thresholds were CORRECTED BY INTAKE
+         in Oct 2026 and DIFFER FROM THE PUBLISHED PDF, which prints them
+         in kg. Both tables are in grams; supply grams, convert nothing.
+  below threshold:  54.4% of 3000 diets</code></pre>
 <blockquote>
-<p><strong>Still an inference, not something Intake has
-confirmed.</strong> The paper never states a unit for the Table 4 series
-at all. The question is with Intake; until it is answered, treat any
-eutrophication result as carrying this assumption. If the answer
-differs, the fix is one <code>local convfac</code> in
-<code>eiod_fn_02_absolute.do</code> — <strong>the reference data needs
-no change, because it was never adjusted.</strong> That is the second
-reason the conversion was moved out of it.</p>
+<p><strong>If you have a script written before October 2026 that divided
+eutrophication by 1000 before calling <code>eiod_absolute</code>, remove
+the division.</strong> The command used to do it for you and no longer
+does; dividing now would make results wrong by a factor of a thousand in
+the other direction.</p>
 </blockquote>
-<p><strong>For the other six indicators there is no conversion
-anywhere</strong>, and both tables use the same unit.</p>
+<h2 id="how-the-problem-was-found">How the problem was found</h2>
+<p>Worth recording, because the same reasoning applies to any reference
+table shipped without units.</p>
+<p>The paper states no unit for Tables 4a–4g anywhere. The decisive test
+was that the ratio between the two tables is <strong>constant across all
+eight demographic groups</strong> — a methodological difference would
+vary by group, a unit difference cannot. Comparing that ratio across
+indicators put eutrophication three orders of magnitude outside the
+range of the other six:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Indicator</th>
+<th style="text-align: right;">Table 4 P10 ÷ Table 3 threshold</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Pasture land use</td>
+<td style="text-align: right;">0.026</td>
+</tr>
+<tr class="even">
+<td>Total land use</td>
+<td style="text-align: right;">0.285</td>
+</tr>
+<tr class="odd">
+<td>Water use</td>
+<td style="text-align: right;">0.346</td>
+</tr>
+<tr class="even">
+<td>Biodiversity loss</td>
+<td style="text-align: right;">0.548</td>
+</tr>
+<tr class="odd">
+<td>Arable land use</td>
+<td style="text-align: right;">0.688</td>
+</tr>
+<tr class="even">
+<td>Greenhouse gas emissions</td>
+<td style="text-align: right;">1.449</td>
+</tr>
+<tr class="odd">
+<td><strong>Eutrophication (as published)</strong></td>
+<td style="text-align: right;"><strong>689.647</strong></td>
+</tr>
+<tr class="even">
+<td><strong>Eutrophication ÷ 1000</strong></td>
+<td style="text-align: right;"><strong>0.690</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Supporting evidence: the EIOF databases report
+<code>Eutr. (g PO43-e/kg)</code> while every other column matches the
+paper’s unit, and the kilogram reading implies a 10th-percentile adult
+diet of 18.4 kg PO₄³⁻eq <strong>per day</strong>. That analysis was put
+to Intake as a technical note; the correction above is their reply.</p>
+<p><strong>For the other six indicators there is no correction and no
+conversion</strong>, and both tables use the same unit.</p>
 <hr />
 <h1 id="where-are-the-table-5a-and-5b-cut-offs">3. Where are the Table
 5a and 5b cut-offs?</h1>
@@ -539,11 +654,11 @@ already there:</p>
 </tbody>
 </table>
 <p>So to check what HESD compared a respondent against:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> eiod_cutoffs.dta, <span class="kw">clear</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">keep</span> <span class="kw">if</span> metric == <span class="st">&quot;abs&quot;</span> &amp; indicator == <span class="st">&quot;biodiv&quot;</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ot">list</span> demogroup value_published_str <span class="ot">value</span>, <span class="kw">noobs</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> eiod_cutoffs.dta, <span class="kw">clear</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">keep</span> <span class="kw">if</span> metric == <span class="st">&quot;abs&quot;</span> &amp; indicator == <span class="st">&quot;biodiv&quot;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ot">list</span> demogroup value_published_str <span class="ot">value</span>, <span class="kw">noobs</span></span></code></pre></div>
 <p>and for HDLEI:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">keep</span> <span class="kw">if</span> metric == <span class="st">&quot;rel&quot;</span> &amp; indicator == <span class="st">&quot;biodiv&quot;</span> &amp; percentile == 30</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">keep</span> <span class="kw">if</span> metric == <span class="st">&quot;rel&quot;</span> &amp; indicator == <span class="st">&quot;biodiv&quot;</span> &amp; percentile == 30</span></code></pre></div>
 <p>The GDQS cut-off of <strong>23</strong> is not in the dataset either
 — it is a scalar, not a table, and lives as the <code>gdqscut(23)</code>
 default of both composite commands.</p>
@@ -552,11 +667,11 @@ copy of these numbers</h2>
 <p><code>eiod_hesd</code> and <code>eiod_hdlei</code> do not
 re-implement the comparison. They <strong>call</strong> the standalone
 command:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>* <span class="kw">in</span> eiod_hesd</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">qui</span> eiod_absolute biodiv, <span class="ot">value</span>(<span class="ot">`biodiversity&#39;</span>) <span class="fu">group</span>(<span class="ot">`group&#39;</span>) <span class="kw">generate</span>(<span class="ot">`envall&#39;</span>) ...</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>* <span class="kw">in</span> eiod_hdlei</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="kw">qui</span> eiod_relative biodiv, <span class="ot">value</span>(<span class="ot">`biodiversity&#39;</span>) <span class="fu">group</span>(<span class="ot">`group&#39;</span>) below(30) ...</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>* <span class="kw">in</span> eiod_hesd</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">qui</span> eiod_absolute biodiv, <span class="ot">value</span>(<span class="ot">`biodiversity&#39;</span>) <span class="fu">group</span>(<span class="ot">`group&#39;</span>) <span class="kw">generate</span>(<span class="ot">`envall&#39;</span>) ...</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>* <span class="kw">in</span> eiod_hdlei</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="kw">qui</span> eiod_relative biodiv, <span class="ot">value</span>(<span class="ot">`biodiversity&#39;</span>) <span class="fu">group</span>(<span class="ot">`group&#39;</span>) below(30) ...</span></code></pre></div>
 <p>That is why you found no cut-off values inside those two files —
 there are none to find. <code>hesd_envsust</code> is identical by
 construction to the standalone Table 3 biodiversity metric, and
@@ -604,8 +719,8 @@ is done to it</strong></td>
 </tbody>
 </table>
 <p>The build asserts the round trip:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> <span class="kw">double</span> _vp_back = <span class="fu">real</span>(value_published_str)</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">assert</span> _vp_back == <span class="ot">value</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> <span class="kw">double</span> _vp_back = <span class="fu">real</span>(value_published_str)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">assert</span> _vp_back == <span class="ot">value</span></span></code></pre></div>
 <p>So the numeric column reproduces the literal text exactly, for all
 616 rows.</p>
 <h2 id="what-the-display-was-doing-and-why-it-looked-wrong">What the
@@ -738,8 +853,9 @@ on anything it cannot parse, so a malformed cell stops the build</td>
 <tr class="even">
 <td>4</td>
 <td><strong>nothing is rescaled</strong>; assert
-<code>scale_to_db_unit</code> has not come back, and
-<code>value == real(value_published_str)</code></td>
+<code>scale_to_db_unit</code> has not come back,
+<code>value == real(value_published_str)</code>, and that exactly 8 rows
+carry a <code>value_source</code> other than <code>published</code></td>
 </tr>
 <tr class="odd">
 <td>5</td>
@@ -778,14 +894,14 @@ digits on every cut-off.</p>
 <hr />
 <h1 id="checking-it-yourself">6. Checking it yourself</h1>
 <p>Pick any cell of any printed table and find it:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> eiod_cutoffs.dta, <span class="kw">clear</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>* Table 3, <span class="kw">total</span> land <span class="kw">use</span>, Male 10+</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="ot">list</span> value_published_str <span class="ot">value</span> <span class="kw">if</span> metric==<span class="st">&quot;abs&quot;</span> &amp; indicator==<span class="st">&quot;landtotal&quot;</span> &amp; demogroup==4, <span class="kw">noobs</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>* Table 4g, biodiversity, Female 10+, the P30 <span class="ot">row</span> that HDLEI uses</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="ot">list</span> value_published_str <span class="ot">value</span> <span class="kw">if</span> metric==<span class="st">&quot;rel&quot;</span> &amp; indicator==<span class="st">&quot;biodiv&quot;</span> <span class="co">///</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    &amp; demogroup==8 &amp; percentile==30, <span class="kw">noobs</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> eiod_cutoffs.dta, <span class="kw">clear</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>* Table 3, <span class="kw">total</span> land <span class="kw">use</span>, Male 10+</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="ot">list</span> value_published_str <span class="ot">value</span> <span class="kw">if</span> metric==<span class="st">&quot;abs&quot;</span> &amp; indicator==<span class="st">&quot;landtotal&quot;</span> &amp; demogroup==4, <span class="kw">noobs</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>* Table 4g, biodiversity, Female 10+, the P30 <span class="ot">row</span> that HDLEI uses</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="ot">list</span> value_published_str <span class="ot">value</span> <span class="kw">if</span> metric==<span class="st">&quot;rel&quot;</span> &amp; indicator==<span class="st">&quot;biodiv&quot;</span> <span class="co">///</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    &amp; demogroup==8 &amp; percentile==30, <span class="kw">noobs</span></span></code></pre></div>
 <p><code>eiod_cutoffs_wide_check.csv</code> lays the whole thing out
 group-by-group for comparison against the PDF.</p>
 <p><em>Last updated 2026-10-06.</em></p>

@@ -150,71 +150,35 @@ program define eiod_absolute, rclass
     frame drop `cf'
 
     * ======================================================================== *
-    * STEP 3b. Put the user's values on the unit THIS table is printed in
+    * STEP 3b. No unit conversion - deliberately, and this is a change
     * ======================================================================== *
     /*
-       SIX of the seven indicators need nothing here: the EIOF database, the
-       methods paper and both cut-off tables all agree.
+       Between July and October 2026 this command divided eutrophication
+       values by 1000 before comparing, and kept the converted variable as
+       `<yourvar>_kg' so the step was visible.
 
-       EUTROPHICATION DOES NOT.
+       THAT IS GONE. Intake confirmed by email in October 2026 that BOTH
+       Table 3 and Table 4f are expressed in grams PO4(3-)eq, and supplied
+       corrected Table 3 eutrophication thresholds - the published PDF prints
+       those eight cells in kilograms. The corrected values ship in
+       eiod_cutoffs.dta and are flagged there by value_source.
 
-         - the EIOF country databases report it as `Eutr. (g PO43-e/kg)', so a
-           respondent total built from them is in GRAMS;
-         - Table 4f is printed in grams, so eiod_relative needs nothing;
-         - Table 3 is printed in KILOGRAMS - the methods paper states this on
-           p.29 - so the absolute metric needs the user's value / 1000.
+       So every indicator is now on a single unit across both tables and
+       nothing is converted anywhere. Supply eutrophication in GRAMS, as the
+       EIOF database gives it to you, and pass it straight in.
 
-       THE CONVERSION IS APPLIED TO THE USER'S VALUE, NEVER TO THE PUBLISHED
-       CUT-OFF. eiod_cutoffs.dta holds exactly what the paper prints, for all
-       616 rows, and can be checked line by line against the PDF. Before
-       2026-10-14 the 80 Table 4f rows were stored pre-divided and matched
-       nothing in the source document.
+       The quantities did not change - the corrected thresholds are the
+       printed ones x1000 - so no classification moves. Tested on 400,000
+       simulated gram-scale values: old and new behaviour agree everywhere
+       except within about one ULP of a cut-off, where the new path is the
+       more exact because it no longer divides before comparing.
 
-       The unit reading is an INFERENCE and is not yet confirmed by Intake.
-       See readme/03_eiod_absolute.md.
+       IF YOU ARE REVISITING AN OLDER SCRIPT that divided eutrophication by
+       1000 before calling this command, remove the division.
 
-       THE CONVERTED VALUE IS KEPT, not thrown away in a tempvar.
-
-       A conversion the user cannot see is a conversion the user has to take on
-       trust. So when one happens, the command leaves `<yourvar>_kg' behind -
-       for eutr_ado you get eutr_ado_kg - and you can check the whole chain by
-       eye in one `list':
-
-           . list eutr_ado eutr_ado_kg thr_eutroph abs_eutroph in 1/5
-
-       g -> kg -> compared against the published Table 3 threshold -> result.
-       Nothing is hidden inside the command.
+       See readme/01_eiod_build_cutoffs.md and readme/03_eiod_absolute.md.
     */
-    local convfac  = 1
-    local convnote ""
-    local convvar  ""
-    if "`ind'" == "eutroph" {
-        local convfac = 0.001
-        local convnote "eutroph: your values divided by 1000 (g -> kg PO4(3-)eq) to match Table 3"
-        local convvar "`value'_kg"
 
-        * a Stata variable name is at most 32 characters
-        if length("`convvar'") > 32 {
-            di as error "cannot create the converted variable `convvar': name too long"
-            di as error "  rename `value' to something shorter (<= 29 characters)"
-            exit 198
-        }
-        if "`replace'" != "" capture drop `convvar'
-        confirm new variable `convvar'
-    }
-
-    * The comparison uses the kept variable when there is one, so the number
-    * you can see is literally the number that was tested - not a parallel
-    * copy that could drift from it.
-    tempvar vtmp
-    if "`convvar'" != "" {
-        qui gen double `convvar' = `value' * `convfac'
-        local vcmp `convvar'
-    }
-    else {
-        qui gen double `vtmp' = `value' * `convfac'
-        local vcmp `vtmp'
-    }
 
     * ======================================================================== *
     * STEP 4. Apply the threshold, group by group
@@ -227,8 +191,8 @@ program define eiod_absolute, rclass
     if "`threshvar'" != "" qui gen double `threshvar' = .
 
     forvalues g = 1/8 {
-        qui replace `generate' = (`vcmp' < `thr`g'') ///
-            if `group' == `g' & !mi(`vcmp')
+        qui replace `generate' = (`value' < `thr`g'') ///
+            if `group' == `g' & !mi(`value')
 
         if "`threshvar'" != "" {
             qui replace `threshvar' = `thr`g'' if `group' == `g'
@@ -241,10 +205,6 @@ program define eiod_absolute, rclass
     lab def eiod_abs 0 "At or above threshold" 1 "Below threshold", replace
     lab val `generate' eiod_abs
     lab var `generate' "`ind': below absolute per capita daily threshold"
-    if "`convvar'" != "" {
-        lab var `convvar' "`value' converted g -> kg PO4(3-)eq, as compared to Table 3"
-        format `convvar' %18.14g
-    }
     if "`threshvar'" != "" {
         lab var `threshvar' "`ind': absolute threshold applied (`unit')"
         /*
@@ -279,13 +239,10 @@ program define eiod_absolute, rclass
     di as txt _n "{bf:Table 3 - absolute threshold}  `ind' (`unit' per capita per day)"
     di as txt    "  created {res}`generate'{txt}" ///
                  cond(`nmiss', " ; {res}`nmiss'{txt} missing of `=`nobs'+`nmiss''", "")
-    if "`convnote'" != "" {
-        di as txt "  {bf:unit:} `convnote'"
-        di as txt "         supply this indicator in GRAMS, as the EIOF database reports it"
-        di as txt "         the published cut-off is NOT altered - see readme/03_eiod_absolute.md"
-        di as txt "  created {res}`convvar'{txt} - the converted value that was actually compared"
-        di as txt "         check it:  {inp}list `value' `convvar'" ///
-                  cond("`threshvar'" != "", " `threshvar'", "") " `generate' in 1/5{txt}"
+    if "`ind'" == "eutroph" {
+        di as txt "  {bf:note:} the Table 3 eutrophication thresholds were CORRECTED BY INTAKE"
+        di as txt "         in Oct 2026 and DIFFER FROM THE PUBLISHED PDF, which prints them"
+        di as txt "         in kg. Both tables are in grams; supply grams, convert nothing."
     }
     if `nobs' {
         di as txt "  below threshold: {res}" %5.1f `pct' "%{txt} of `nobs' diets"
@@ -294,8 +251,6 @@ program define eiod_absolute, rclass
     return scalar N      = `nobs'
     return scalar N_miss = `nmiss'
     return scalar pct    = `pct'
-    return scalar convfac = `convfac'
-    return local  convvar "`convvar'"
     return local  ind    "`ind'"
     return local  unit   "`unit'"
 end

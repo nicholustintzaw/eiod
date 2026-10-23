@@ -104,6 +104,7 @@ recast double age_min age_max
 * Every other indicator uses one unit across both tables.
 lab var value               "Cut-off exactly as printed in the methods paper"
 lab var value_published_str "Cut-off as printed in the methods paper (literal text)"
+lab var value_source        "published, or an Intake correction (see header)"
 
 /*
    DISPLAY PRECISION.
@@ -210,29 +211,48 @@ cap confirm variable scale_to_db_unit
 assert _rc != 0                         // the column must not come back
 assert value == real(value_published_str)
 
-* 8. the unit column says what each table is actually printed in.
-*    Eutrophication is the only indicator whose two tables differ.
-assert unit == "kg PO4(3-)eq" if indicator == "eutroph" & metric == "abs"
-assert unit == "g PO4(3-)eq"  if indicator == "eutroph" & metric == "rel"
-* Count DISTINCT levels with r(r). Do not use `: word count' on the levels -
-* several units contain a space ("kg CO2eq", "m2*year"), so word-counting them
-* reports 2 for a single level and the assertion fails on correct data.
+* 8. EVERY indicator now uses one unit across both tables. Eutrophication was
+*    the exception until Intake's October 2026 correction; if this fails again,
+*    the CSV has regressed.
+*    Count DISTINCT levels with r(r). Do not use `: word count' on the levels -
+*    several units contain a space ("kg CO2eq", "m2*year"), so word-counting
+*    them reports 2 for a single level and the assertion fails on correct data.
 levelsof indicator, local(INDS) clean
 foreach i of local INDS {
-    if "`i'" != "eutroph" {
-        qui levelsof unit if indicator == "`i'"
-        assert r(r) == 1
-    }
+    qui levelsof unit if indicator == "`i'"
+    assert r(r) == 1
 }
-qui levelsof unit if indicator == "eutroph"
-assert r(r) == 2
+assert unit == "g PO4(3-)eq" if indicator == "eutroph"
+
+* 9. provenance: exactly eight rows differ from the published PDF, and they are
+*    the Table 3 eutrophication thresholds Intake corrected
+confirm variable value_source
+count if value_source != "published"
+assert r(N) == 8
+assert value_source == "intake correction 2026-10" ///
+    if indicator == "eutroph" & metric == "abs"
+
+* 10. and the correction is a change of UNIT, not of quantity: each corrected
+*     value / 1000 must reproduce the figure the PDF prints, to its 10 decimals
+preserve
+    qui keep if indicator == "eutroph" & metric == "abs"
+    sort demogroup
+    local PUB "0.0076827204 0.0119198764 0.0164158298 0.0267453228 0.0074439228 0.0110398856 0.0150718438 0.0215133770"
+    forvalues g = 1/8 {
+        local want : word `g' of `PUB'
+        local got  = string(value[`g'] / 1000, "%15.10f")
+        local wantf = string(real("`want'"), "%15.10f")
+        assert "`got'" == "`wantf'"
+    }
+    di as result "verified: the 8 corrected thresholds reproduce the printed PDF values x1000"
+restore
 
 di as result _n "all structural checks passed"
 
 * ---- save ------------------------------------------------------------------ *
 order   metric table indicator indicator_label unit                 ///
         demogroup demogroup_label sex age_min age_max               ///
-        row_order percentile value value_published_str
+        row_order percentile value value_published_str value_source
 sort    metric indicator demogroup row_order
 
 compress
@@ -240,9 +260,12 @@ note: Cut-offs for the Intake dietary environmental impact metrics.
 note: Source - Intake-EIOD-Methods-Paper-Jan2026-Final.pdf, Tables 3 and 4a-4g.
 note: https://www.intake.org/sites/default/files/2026-01/Intake-EIOD-Methods-Paper-Jan2026-Final.pdf
 note: Built by eiod_build_cutoffs.do on `c(current_date)'.
-note: `value' is the cut-off EXACTLY as printed in the paper - nothing is rescaled.
-note: Eutrophication is printed in kg in Table 3 and in g in Table 4f; see the
-note: unit variable and eiod_absolute, which converts the users value not the cut-off.
+note: `value' is the cut-off exactly as received - nothing is rescaled here.
+note: 608 rows are as printed in the paper. The 8 Table 3 eutrophication rows are
+note: CORRECTIONS SUPPLIED BY INTAKE (Oct 2026) and DIFFER FROM THE PUBLISHED PDF,
+note: which prints them in kg; both tables are in grams. See value_source.
+note: The corrected values are the printed ones x1000 - same quantity, different
+note: unit - so no classification changes. Supply eutrophication in GRAMS.
 
 save "$EIOD_OUT/eiod_cutoffs.dta", replace
 

@@ -17,7 +17,7 @@ Table 3, *"Cut-Offs by Demographic Group for Absolute Threshold Metrics"* — **
 | Arable land use | m²·year | | | | |
 | Pasture land use | m²·year | | | | |
 | GHG emissions | kg CO₂eq | | | | |
-| Eutrophication | kg PO₄³⁻eq | | | | |
+| Eutrophication | **g** PO₄³⁻eq (corrected; the PDF prints kg) | | | | |
 | Water use | litres | | | | |
 | Biodiversity loss | PDF·year | | | | |
 
@@ -32,83 +32,40 @@ Each cell is that group's share of the **per capita daily planetary boundary**, 
  STEP 2   validate output names; group ∈ 1..8         else exit 459
  STEP 2b  QC the input variable                       storage, sign, underflow, scale
  STEP 3   read the 8 thresholds into a temporary FRAME
- STEP 3b  put the USER'S values on this table's unit  ← eutrophication only
  STEP 4   apply the threshold, group by group    ← THE CALCULATION
  STEP 5   value-label the result
  STEP 6   report and return
 ```
 
-### STEP 3b — the one unit conversion in the package
+### STEP 3b — no unit conversion, for any indicator
 
-**Six of the seven indicators pass through untouched.** The EIOF database, the
-methods paper and both cut-off tables agree on their units, so `convfac` is 1
-and nothing happens.
+**There used to be one here, and its removal is the main change of October 2026.**
 
-**Eutrophication is the exception**, because the EIOF country databases report
-it as `Eutr. (g PO43-e/kg)` — in grams — while Table 3 is printed in
-kilograms:
+Between July and October the command divided eutrophication values by 1000 before comparing, because the published Table 3 printed that row in **kilograms** while Table 4f and the EIOF databases use **grams**. The converted value was kept as `<yourvar>_kg` so the step was visible.
+
+**Intake confirmed that both tables are in grams** and supplied corrected Table 3 thresholds. Those now ship in `eiod_cutoffs.dta`, flagged by `value_source`, and the division is gone:
 
 ```stata
-tempvar vcmp
-local convfac = 1
-local convnote ""
-if "`ind'" == "eutroph" {
-    local convfac = 0.001
-    local convnote "eutroph: your values divided by 1000 (g -> kg PO4(3-)eq) to match Table 3"
+* nothing between reading the thresholds and applying them
+forvalues g = 1/8 {
+    qui replace `generate' = (`value' < `thr`g'') ///
+        if `group' == `g' & !mi(`value')
 }
-qui gen double `vcmp' = `value' * `convfac'
 ```
 
-### The converted value is kept, not discarded
+**Supply eutrophication in GRAMS and convert nothing.** The command reports that these thresholds differ from the PDF, every time it is run on this indicator:
 
-A conversion the user cannot see is a conversion the user has to take on trust. So the command leaves **`<yourvar>_kg`** behind — for `eutr_ado` you get `eutr_ado_kg` — and the whole chain reads off one table:
-
-```stata
-. list eutr_ado eutr_ado_kg thr_eutroph abs_eutroph in 1/4, noobs abbrev(14)
-
-  +---------------------------------------------------------------------+
-  |  eutr_ado         eutr_ado_kg   thr_eutroph             abs_eutroph |
-  |---------------------------------------------------------------------|
-  |  28.12399    .028123990101136    .021513377   At or above threshold |
-  | 13.702354    .013702354382423    .021513377         Below threshold |
-  | 10.901663    .010901662567893   .0267453228         Below threshold |
-  | 54.282283    .054282282809918   .0267453228   At or above threshold |
-  +---------------------------------------------------------------------+
+```
+Table 3 - absolute threshold  eutroph (g PO4(3-)eq per capita per day)
+  created abs_eutroph
+  note: the Table 3 eutrophication thresholds were CORRECTED BY INTAKE
+         in Oct 2026 and DIFFER FROM THE PUBLISHED PDF, which prints them
+         in kg. Both tables are in grams; supply grams, convert nothing.
 ```
 
-grams → kilograms → the published Table 3 threshold → the result.
+> **If you have a script written before October 2026** that divided eutrophication by 1000 before calling this command, **remove the division.** The command no longer does it for you, so dividing now makes results wrong by a factor of a thousand in the other direction.
 
-**The comparison uses that very variable**, not a parallel copy, so what you see is literally what was tested. The demo asserts it:
-
-```stata
-assert reldif(eutr_ado_kg, eutr_ado / 1000) < 1e-12 if !mi(eutr_ado)
-assert abs_eutroph == (eutr_ado_kg < thr_eutroph)   if !mi(eutr_ado_kg)
-```
-
-Housekeeping: the name is honoured by `replace`, a collision without `replace` is an error like any other `generate`, and a name longer than 32 characters is refused with a message telling you to shorten the input variable. `r(convvar)` returns the name, `r(convfac)` the multiplier.
-
-In the R package the vector API means there is no dataset to write into, so the same information lands in the detail frame: `eiod_absolute_threshold(..., details = TRUE)` returns a `value_kg` column alongside `value`, `cutoff` and `below`.
-
-### Three things about this are deliberate
-
-1. **It converts the user's value, never the published cut-off.**
-   `eiod_cutoffs.dta` holds exactly what the paper prints for all 616 rows, so
-   it can be checked line by line against the PDF. Before 2026-10-14 the 80
-   Table 4f rows were stored pre-divided and matched nothing in the source
-   document.
-2. **It is announced in the output**, every time, under `unit:`. It is the only
-   place in the package where a number you supplied is altered before use, and
-   it should be visible in your log.
-3. **It is one local in one file.** If Intake confirms a different reading, the
-   fix is `local convfac` and nothing else — the reference data needs no change,
-   because it was never adjusted.
-
-`eiod_relative` has no equivalent step: Table 4f is printed in grams, so a gram
-input needs no conversion there.
-
-> **Supply eutrophication in GRAMS.** See
-> `01_eiod_build_cutoffs.md` §2 for the evidence, and note that the unit
-> reading is an inference Intake has not yet confirmed.
+**The quantities did not change** — the corrected thresholds are the printed ones × 1000 — so no classification moves. See `01_eiod_build_cutoffs.md` §2 for the evidence, the per-group table, and how the discrepancy was found.
 
 ### STEP 3 — eight numbers, asserted
 

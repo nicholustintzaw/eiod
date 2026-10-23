@@ -66,7 +66,10 @@ assert value == 4.0898629907    if metric=="abs" & indicator=="landtotal"   & de
 assert value == 5.5735931918    if metric=="abs" & indicator=="landarable"  & demogroup==4
 assert value == 6.9692717624    if metric=="abs" & indicator=="landpasture" & demogroup==8
 assert value == 0.8845537944    if metric=="abs" & indicator=="ghg"         & demogroup==6
-assert value == 0.0267453228    if metric=="abs" & indicator=="eutroph"     & demogroup==4
+* NOT 0.0267453228 - that is the figure the PDF prints, in kilograms. Intake
+* corrected this row to grams in Oct 2026; checked in full further down.
+assert reldif(value, 26.745322780673799) < 1e-14 ///
+                                if metric=="abs" & indicator=="eutroph"     & demogroup==4
 assert value == 1726.3821057877 if metric=="abs" & indicator=="water"       & demogroup==8
 assert value == 1.2844358718e-12 if metric=="abs" & indicator=="biodiv"     & demogroup==4
 assert value == 3.6896027444e-13 if metric=="abs" & indicator=="biodiv"     & demogroup==1
@@ -101,9 +104,34 @@ assert value == real(value_published_str)
 cap confirm variable scale_to_db_unit
 assert _rc != 0
 
-* --- and the unit column distinguishes the two eutrophication tables --- *
-assert unit == "kg PO4(3-)eq" if indicator=="eutroph" & metric=="abs"
-assert unit == "g PO4(3-)eq"  if indicator=="eutroph" & metric=="rel"
+* --- every indicator now uses ONE unit across both tables --- *
+* Eutrophication was the exception until Intake's October 2026 correction.
+assert unit == "g PO4(3-)eq" if indicator=="eutroph"
+levelsof indicator, local(VINDS) clean
+foreach i of local VINDS {
+    qui levelsof unit if indicator == "`i'"
+    assert r(r) == 1
+}
+
+* --- the eight corrected Table 3 eutrophication thresholds --- *
+* These are the ONLY rows that do not match the published PDF. The correction
+* is a change of unit, not of quantity: each value / 1000 reproduces the
+* printed figure to the ten decimals the paper gives.
+confirm variable value_source
+count if value_source != "published"
+assert r(N) == 8
+assert value_source == "intake correction 2026-10" ///
+    if indicator=="eutroph" & metric=="abs"
+
+preserve
+    qui keep if indicator == "eutroph" & metric == "abs"
+    sort demogroup
+    local VPUB "0.0076827204 0.0119198764 0.0164158298 0.0267453228 0.0074439228 0.0110398856 0.0150718438 0.0215133770"
+    forvalues g = 1/8 {
+        local w : word `g' of `VPUB'
+        assert string(value[`g'] / 1000, "%15.10f") == string(real("`w'"), "%15.10f")
+    }
+restore
 
 * --- Table 4g (biodiversity) --- *
 assert value == 2.0227051058e-13 if metric=="rel" & indicator=="biodiv" & demogroup==1 & percentile==10

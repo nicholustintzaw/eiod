@@ -26,9 +26,12 @@ Diets methods paper (January 2026), as Stata do-files.
   aggregate, and report it with any prevalence. See README section 5b and
   `functions/readme/06_eiod_infrastructure.md`.
 
-* **The eutrophication unit reading is an inference.** The paper states no unit for Tables
-  4a–4g; the package reads Table 4f as grams and Table 3 as kilograms. See
-  `functions/readme/01_eiod_build_cutoffs.md` §2 for the evidence. The question is with Intake.
+* **Eight eutrophication cut-offs differ from the published PDF.** Intake confirmed in
+  October 2026 that Tables 3 and 4f are both in grams and supplied corrected Table 3
+  thresholds; the PDF prints that row in kilograms. The corrected values are the printed
+  ones x1000, so no result changes, and `value_source` marks the eight rows. **Supply
+  eutrophication in grams and convert nothing** - the /1000 step the command used to apply
+  is gone. See `functions/readme/01_eiod_build_cutoffs.md` §2.
 * **No automated test run in CI.** Stata is licensed software and GitHub's runners do not have
   it, so `validate/eiod_validate.do` is run locally and its result recorded. The CI workflow
   checks structure only — see `.github/workflows/checks.yml`.

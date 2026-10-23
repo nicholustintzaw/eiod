@@ -214,24 +214,31 @@ Read these before writing up anything.
 
 **3. The composites exclude under-2s by design.** Tables 5a/5b print six columns, not eight: the GDQS is not validated below age 2. All four outputs are missing for groups 1 and 5. If your sample includes under-2s, decide explicitly whether they belong in the analysis sample — it changes every denominator.
 
-**4. Eutrophication is printed in two different units — supply it in GRAMS.** Table 3 prints it in **kg** PO₄³⁻eq; Table 4f prints it in **g**. Both numbers in `eiod_cutoffs.dta` are exactly as published. The EIOF country databases report `Eutr. (g PO43-e/kg)`, so your respondent total is already in grams: `eiod_relative` needs nothing, and `eiod_absolute` divides by 1000 for you.
+**4. Eight eutrophication cut-offs differ from the published PDF, on Intake's instruction.** Supply eutrophication in **grams** and convert nothing.
 
-**You can see it happen.** The converted value is kept as `<yourvar>_kg`, so the whole chain reads off one table:
+The methods paper prints the Table 3 eutrophication row in **kilograms** while Table 4f, and the EIOF databases, use **grams**. Intake confirmed by email in October 2026 that both tables are meant to be in grams, and supplied corrected Table 3 values. Those eight rows are the only ones in `eiod_cutoffs.dta` that do not match the PDF, and `value_source` marks them:
 
 ```stata
-. list eutr_ado eutr_ado_kg thr_eutroph abs_eutroph in 1/4, noobs abbrev(14)
-
-  +---------------------------------------------------------------------+
-  |  eutr_ado         eutr_ado_kg   thr_eutroph             abs_eutroph |
-  |---------------------------------------------------------------------|
-  |  28.12399    .028123990101136    .021513377   At or above threshold |
-  | 13.702354    .013702354382423    .021513377         Below threshold |
-  | 10.901663    .010901662567893   .0267453228         Below threshold |
-  | 54.282283    .054282282809918   .0267453228   At or above threshold |
-  +---------------------------------------------------------------------+
+. use "$EIOD_HOME/dta/eiod_cutoffs.dta", clear
+. list demogroup_label value value_source if value_source != "published", noobs
 ```
 
-grams → kilograms → compared against the published Table 3 threshold → result. **No published cut-off is ever altered**; the only thing that moved is your own value, and it is sitting there to be checked. The unit reading is an inference **not confirmed by Intake** — see `functions/readme/01_eiod_build_cutoffs.md` §2.
+**The quantity did not change, only the unit.** The corrected values are the printed ones × 1000, so dividing any of them by 1000 reproduces the figure in the PDF to its ten decimals — the build and the validator both assert it. **No classification moves.**
+
+```stata
+. list eutr_ado thr_eutroph abs_eutroph in 1/4, noobs abbrev(14)
+
+  +-----------------------------------------------------+
+  |  eutr_ado       thr_eutroph             abs_eutroph |
+  |-----------------------------------------------------|
+  |  28.12399   21.513377010585   At or above threshold |
+  | 13.702354   21.513377010585         Below threshold |
+  | 10.901663   26.745322780674         Below threshold |
+  | 54.282283   26.745322780674   At or above threshold |
+  +-----------------------------------------------------+
+```
+
+> **Changed October 2026.** Until then `eiod_absolute` divided eutrophication by 1000 for you, and kept the result as `<yourvar>_kg`. Both are gone. **If you have a script that divided eutrophication by 1000 before calling the command, remove the division.** See `functions/readme/01_eiod_build_cutoffs.md` §2.
 
 ---
 

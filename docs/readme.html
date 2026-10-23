@@ -752,32 +752,41 @@ Worth a sentence in any methods section.</p>
 2. All four outputs are missing for groups 1 and 5. If your sample
 includes under-2s, decide explicitly whether they belong in the analysis
 sample — it changes every denominator.</p>
-<p><strong>4. Eutrophication is printed in two different units — supply
-it in GRAMS.</strong> Table 3 prints it in <strong>kg</strong> PO₄³⁻eq;
-Table 4f prints it in <strong>g</strong>. Both numbers in
-<code>eiod_cutoffs.dta</code> are exactly as published. The EIOF country
-databases report <code>Eutr. (g PO43-e/kg)</code>, so your respondent
-total is already in grams: <code>eiod_relative</code> needs nothing, and
-<code>eiod_absolute</code> divides by 1000 for you.</p>
-<p><strong>You can see it happen.</strong> The converted value is kept
-as <code>&lt;yourvar&gt;_kg</code>, so the whole chain reads off one
-table:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>. <span class="ot">list</span> eutr_ado eutr_ado_kg thr_eutroph abs_eutroph <span class="kw">in</span> 1/4, <span class="kw">noobs</span> <span class="fu">abbrev</span>(14)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  +---------------------------------------------------------------------+</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  |  eutr_ado         eutr_ado_kg   thr_eutroph             abs_eutroph |</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  |---------------------------------------------------------------------|</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  |  28.12399    .028123990101136    .021513377   At <span class="kw">or</span> above threshold |</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  | 13.702354    .013702354382423    .021513377         Below threshold |</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  | 10.901663    .010901662567893   .0267453228         Below threshold |</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  | 54.282283    .054282282809918   .0267453228   At <span class="kw">or</span> above threshold |</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  +---------------------------------------------------------------------+</span></code></pre></div>
-<p>grams → kilograms → compared against the published Table 3 threshold
-→ result. <strong>No published cut-off is ever altered</strong>; the
-only thing that moved is your own value, and it is sitting there to be
-checked. The unit reading is an inference <strong>not confirmed by
-Intake</strong> — see
+<p><strong>4. Eight eutrophication cut-offs differ from the published
+PDF, on Intake’s instruction.</strong> Supply eutrophication in
+<strong>grams</strong> and convert nothing.</p>
+<p>The methods paper prints the Table 3 eutrophication row in
+<strong>kilograms</strong> while Table 4f, and the EIOF databases, use
+<strong>grams</strong>. Intake confirmed by email in October 2026 that
+both tables are meant to be in grams, and supplied corrected Table 3
+values. Those eight rows are the only ones in
+<code>eiod_cutoffs.dta</code> that do not match the PDF, and
+<code>value_source</code> marks them:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>. <span class="kw">use</span> <span class="st">&quot;$EIOD_HOME/dta/eiod_cutoffs.dta&quot;</span>, <span class="kw">clear</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>. <span class="ot">list</span> demogroup_label <span class="ot">value</span> value_source <span class="kw">if</span> value_source != <span class="st">&quot;published&quot;</span>, <span class="kw">noobs</span></span></code></pre></div>
+<p><strong>The quantity did not change, only the unit.</strong> The
+corrected values are the printed ones × 1000, so dividing any of them by
+1000 reproduces the figure in the PDF to its ten decimals — the build
+and the validator both assert it. <strong>No classification
+moves.</strong></p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>. <span class="ot">list</span> eutr_ado thr_eutroph abs_eutroph <span class="kw">in</span> 1/4, <span class="kw">noobs</span> <span class="fu">abbrev</span>(14)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  +-----------------------------------------------------+</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  |  eutr_ado       thr_eutroph             abs_eutroph |</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  |-----------------------------------------------------|</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  |  28.12399   21.513377010585   At <span class="kw">or</span> above threshold |</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  | 13.702354   21.513377010585         Below threshold |</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  | 10.901663   26.745322780674         Below threshold |</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  | 54.282283   26.745322780674   At <span class="kw">or</span> above threshold |</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  +-----------------------------------------------------+</span></code></pre></div>
+<blockquote>
+<p><strong>Changed October 2026.</strong> Until then
+<code>eiod_absolute</code> divided eutrophication by 1000 for you, and
+kept the result as <code>&lt;yourvar&gt;_kg</code>. Both are gone.
+<strong>If you have a script that divided eutrophication by 1000 before
+calling the command, remove the division.</strong> See
 <code>functions/readme/01_eiod_build_cutoffs.md</code> §2.</p>
+</blockquote>
 <hr />
 <h1 id="b.-are-the-cut-offs-exactly-the-published-ones">6b. Are the
 cut-offs exactly the published ones?</h1>

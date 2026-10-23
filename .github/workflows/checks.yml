@@ -88,7 +88,7 @@ jobs:
             echo "expected 616 data rows, found $rows" >&2; exit 1
           fi
 
-          expected='metric,table,indicator,indicator_label,unit,demogroup,demogroup_label,sex,age_min,age_max,row_order,percentile,value_published'
+          expected='metric,table,indicator,indicator_label,unit,demogroup,demogroup_label,sex,age_min,age_max,row_order,percentile,value_published,value_source'
           actual=$(head -1 "$csv" | tr -d '"\r')
           echo "columns: $actual"
           if [ "$actual" != "$expected" ]; then
