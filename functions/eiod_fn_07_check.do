@@ -299,7 +299,7 @@ program define eiod_check_impact, rclass
     if `nbad' == 0 {
         di as txt _n "all inputs pass. Reminder of what this did NOT check:"
         di as txt "  - that the UNIT matches the EIOF database (m2*year, kg CO2eq,"
-        di as txt "    kg PO4eq, litres, PDF*year)"
+        di as txt "    g PO4eq, litres, PDF*year)"
         di as txt "  - that the value is a respondent-DAY total, already summed"
         di as txt "    across every ingredient consumed"
         di as txt "  Neither is inferable from the numbers alone."

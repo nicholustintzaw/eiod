@@ -93,15 +93,17 @@ recast double age_min age_max
 * the entire point of shipping this dataset is that a reader can check it line
 * by line against the PDF.
 *
-* `value' is now the cut-off EXACTLY as printed, for all 616 rows. The
-* eutrophication adjustment happens where it belongs: inside eiod_absolute, at
-* the moment of comparison, applied to the USER'S variable, announced in the
-* output, and documented in readme/03_eiod_absolute.md.
+* `value' is now the cut-off EXACTLY as printed, for all 616 rows - except
+* the eight Table 3 eutrophication rows, which carry the values Intake
+* confirmed in October 2026 (flagged by value_source; see section 10 below).
 *
-* The `unit' column now records what each table is actually printed in:
-*   eutroph + abs  -> kg PO4(3-)eq   (Table 3)
-*   eutroph + rel  ->  g PO4(3-)eq   (Table 4f)
-* Every other indicator uses one unit across both tables.
+* Between 2026-10-14 and 2026-10-22 eiod_absolute divided the user's
+* eutrophication by 1000 to match Table 3 as printed in kg. That is gone:
+* Intake confirmed both tables are in grams, so nothing is converted anywhere.
+*
+* The `unit' column records one unit per indicator across both tables:
+*   eutroph (abs and rel) -> g PO4(3-)eq   (Tables 3 and 4f)
+* Asserted in section 8 below.
 lab var value               "Cut-off exactly as printed in the methods paper"
 lab var value_published_str "Cut-off as printed in the methods paper (literal text)"
 lab var value_source        "published, or an Intake correction (see header)"
