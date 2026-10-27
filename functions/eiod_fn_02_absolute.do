@@ -38,7 +38,7 @@
                       landarable     arable land use          m2*year
                       landpasture    pasture land use         m2*year
                       ghg            greenhouse gas emissions kg CO2eq
-                      eutroph        eutrophication potential kg PO4(3-)eq
+                      eutroph        eutrophication potential g PO4(3-)eq
                       water          water use                litres
                       biodiv         biodiversity loss        PDF*year
 
